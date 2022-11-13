@@ -379,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**************************************************************************/
 
-	//QQ群 key：AEdaVAI7Dvijz39bHJzWg7wtZCT7kTW8
+	//QQ群 key：qun.qq.com
 	public boolean joinQQGroup(String key) {
 		Intent intent = new Intent();
 		intent.setData(Uri.parse(
@@ -492,7 +492,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
                 //群聊
             case R.id.qun:
-                if (joinQQGroup("AEdaVAI7Dvijz39bHJzWg7wtZCT7kTW8")) {
+                if (joinQQGroup("yy-t5uc2_M6gq66cqFFRDHR4LqQLPCAi")) {
                     Toast.makeText(this, "正在跳转至反馈群...", Toast.LENGTH_SHORT).show();
                 }
                 return true;
