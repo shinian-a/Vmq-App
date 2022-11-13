@@ -8,6 +8,8 @@
 
 ###安装教程
 
+Android：将项目导入存储卡/sdcard/AppProjects 目录下 使用AIDE构建
+
 1.下载位于：https://shinianacn.lanzouy.com/b027kqata 密码:vmq
 或Releases下载
 

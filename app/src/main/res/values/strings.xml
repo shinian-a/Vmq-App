@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">V免签监控端_Pro</string>
+    <string name="skm">请长按保存收款码</string>
+    <string name="WeChat">打开微信扫一扫</string>
+    <string name="url"> 通知地址：请手动配置</string>
+    <string name="key"> 通讯密钥：请手动配置</string>
+    <string name="pz">手动配置</string>
+    <string name="xt">检测心跳</string>
+    <string name="jt">检测监听</string>
+    <string name="admin_url">打开后台</string>
+    <string name="bq">Copyright © 2022 十年. All rights reserved.</string>
+    <string name="fk">反馈QQ群</string>
+    <string name="fx">分享软件</string>
+    <string name="ds">打赏作者</string>
+    <string name="gy">关于/帮助</string>
+    <string name="tc">退出程序</string>
+    <string name="qx">V免签监听服务[必选]</string>
+    <string name="help_title">V免签监控端配置文档</string>
+    <string name="help_content">1.必须要要在监控端手机上登录同一个微信或支付宝账户否则不能回调(上传哪个账户的收款码就登录哪个账户)</string>
+    <string name="help_content2">2.以下设置“必须”按照图片中内容配置否则监控端会在手机优化内存时被杀死从而无法监听到通知回调</string>
+    <string name="help_01">登录V免签后台复制配置数据</string>
+    <string name="help_02">监控端配置数据</string>
+    <string name="help_03">开启微信通知权限</string>
+    <string name="help_04">开启支付宝通知权限</string>
+    <string name="help_05">开启V免签监控端自启动权限[允许后台运行]</string>
+      
+</resources>

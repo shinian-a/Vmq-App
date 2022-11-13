@@ -1,0 +1,30 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    
+
+    <item       
+        android:id="@+id/qun"
+        android:title="@string/fk"
+        android:icon="@drawable/menu_qq"/>
+    
+    <item
+        android:id="@+id/share"
+        android:title="@string/fx"
+        android:icon="@drawable/menu_fx"/>
+    
+    <item     
+        android:id="@+id/support"
+        android:title="@string/ds"
+        android:icon="@drawable/menu_ds"/>
+    
+    <item       
+        android:id="@+id/about"
+        android:title="@string/gy"
+        android:icon="@drawable/menu_gy"/>
+    
+    <item     
+        android:id="@+id/exit"
+        android:title="@string/tc"
+        android:icon="@drawable/menu_exit"/>
+    
+</menu>

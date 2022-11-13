@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	tools:context="com.shinian.pay">
+
+	<TextView
+		android:paddingTop="20dp"
+		android:paddingBottom="10dp"
+		android:id="@+id/txt_host"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:baselineAligned="false"
+		android:text="@string/url"
+		android:textColor="#FF000000"
+		android:textColorHighlight="#FF000000"/>
+
+	<TextView
+		android:paddingBottom="20dp"
+		android:id="@+id/txt_key"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/key"
+		android:layout_marginTop="20dp"
+		android:textColor="#FF000000"
+		android:textColorHighlight="#FF000000"/>
+
+	<Button
+		android:id="@+id/btn_input"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:onClick="doInput"
+		android:text="@string/pz"
+		android:layout_marginTop="30dp"
+		android:background="#FF49FFE9"
+		android:singleLine="true"
+		android:textStyle="italic"/>
+
+	<Button
+		android:id="@+id/btn_start"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:onClick="doStart"
+		android:text="@string/xt"
+		android:layout_marginTop="30dp"
+		android:background="#FFFFDEDE"
+		android:singleLine="true"
+		android:textStyle="italic"/>
+
+	<Button
+		android:id="@+id/btn_checkpush"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:onClick="checkPush"
+		android:text="@string/jt"
+		android:layout_marginTop="30dp"
+		android:background="#FFCAC1FF"
+		android:shadowColor="#FFB687FF"
+		android:singleLine="true"
+		android:textStyle="italic"/>
+
+	<Button
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/admin_url"
+		android:layout_marginTop="30dp"
+		android:textSize="15sp"
+		android:background="#FFC7F1BE"
+		android:textColor="#FF000000"
+		android:textStyle="bold|italic"
+		android:onClick="admin_url"/>
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="63dp"
+		android:layout_marginTop="350dp"
+		android:gravity="center">
+
+		<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/bq"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:gravity="center"
+			android:onClick="author"
+			android:textColor="#FFFF0000"/>
+
+	</LinearLayout>
+
+</LinearLayout>
+
