@@ -32,6 +32,7 @@ Android：将项目导入存储卡/sdcard/AppProjects 目录下 使用AIDE构建
 ## 其他下载镜像
 
 1.[蓝奏云镜像](https://shinianacn.lanzouy.com/b027kqata) 密码:vmq
+
 2.[Gitee镜像](https://gitee.com/shinian-a/Vmq-App/releases)
 
 2.安装至android系统的手机打开进行权限配置和数据配置检测更新即可！
