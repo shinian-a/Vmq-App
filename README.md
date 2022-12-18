@@ -10,7 +10,7 @@
 
 ### 微信收款监听
 ![image](https://s1.ax1x.com/2022/12/19/zqu0rF.jpg)
-![image](https://imgse.com/i/zquHPI)
+[![zqubGt.jpg](https://s1.ax1x.com/2022/12/19/zqubGt.jpg)](https://imgse.com/i/zqubGt)
 
 ### 支付宝收款监听
 [![zqKYee.jpg](https://s1.ax1x.com/2022/12/19/zqKYee.jpg)](https://imgse.com/i/zqKYee)
@@ -43,4 +43,4 @@ android软件更新迭代较快，保持更新是唯一不会使业务受到影�
 
 ### 致谢
 
-V免签：https://github.com/szvone/Vmq
+[V免签](https://github.com/szvone/Vmq)
