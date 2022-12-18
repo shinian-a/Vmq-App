@@ -20,7 +20,7 @@
 
 ### 支付成功
 [![zquXM8.jpg](https://s1.ax1x.com/2022/12/19/zquXM8.jpg)](https://imgse.com/i/zquXM8)
-[![zquqRP.jpg](https://s1.ax1x.com/2022/12/19/zquqRP.jpg)](https://imgse.com/i/zquqRP)
+![image](https://s1.ax1x.com/2022/12/19/zquLxf.jpg)
 
 
 ## 安装教程
