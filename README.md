@@ -8,7 +8,19 @@
 
 ## 监听截图
 ### 微信收款监听
-![image](https://s1.ax1x.com/2022/12/19/zqu0rF.jpg)
+![image](https://imgse.com/i/zqubGt
+
+)
+
+![image](
+
+https://imgse.com/i/zquHPI)
+
+### 支付宝收款监听
+![image](https://s1.ax1x.com/2022/12/19/zqucP1.jpg)
+
+### 心跳
+![image](https://s1.ax1x.com/2022/12/19/zquTIA.jpg)
 
 ## 安装教程
 
