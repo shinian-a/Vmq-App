@@ -7,20 +7,21 @@
 软件采用Java原生开发
 
 ## 监听截图
+
 ### 微信收款监听
-![image](https://imgse.com/i/zqubGt
-
-)
-
-![image](
-
-https://imgse.com/i/zquHPI)
+![image](https://s1.ax1x.com/2022/12/19/zqu0rF.jpg)
+![image](https://imgse.com/i/zquHPI)
 
 ### 支付宝收款监听
-![image](https://s1.ax1x.com/2022/12/19/zqucP1.jpg)
+[![zqKYee.jpg](https://s1.ax1x.com/2022/12/19/zqKYee.jpg)](https://imgse.com/i/zqKYee)
 
 ### 心跳
 ![image](https://s1.ax1x.com/2022/12/19/zquTIA.jpg)
+
+### 支付成功
+[![zquXM8.jpg](https://s1.ax1x.com/2022/12/19/zquXM8.jpg)](https://imgse.com/i/zquXM8)
+[![zquqRP.jpg](https://s1.ax1x.com/2022/12/19/zquqRP.jpg)](https://imgse.com/i/zquqRP)
+
 
 ## 安装教程
 
