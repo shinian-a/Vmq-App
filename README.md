@@ -6,6 +6,10 @@
 
 软件采用Java原生开发
 
+## 监听截图
+### 微信收款监听
+![image](https://s1.ax1x.com/2022/12/19/zqu0rF.jpg)
+
 ## 安装教程
 
 Android：将项目导入存储卡/sdcard/AppProjects 目录下 使用AIDE构建
