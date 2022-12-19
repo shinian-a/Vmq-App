@@ -26,8 +26,10 @@
 
 
 ## 安装教程
-下载位于：Releases 下载apk进行安装
-Android：将项目导入存储卡/sdcard/AppProjects 目录下 使用AIDE构建
+下载位于：[Releases](https://github.com/shinian-a/Vmq-App/releases) 下载apk进行安装配置权限和数据安装微信支付宝即可
+
+### 构建
+Android：将项目源码导入存储卡/sdcard/AppProjects 目录下 使用AIDE构建
 
 ## 其他下载镜像
 
