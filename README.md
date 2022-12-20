@@ -29,7 +29,7 @@
 下载位于：[Releases](https://github.com/shinian-a/Vmq-App/releases) 下载apk进行安装配置权限和数据安装微信支付宝即可
 
 ### 构建
-Android：将项目源码导入存储卡/sdcard/AppProjects 目录下 使用AIDE构建
+Android：将项目源码导入存储卡/sdcard/AppProjects 目录下 使用AIDE工具构建
 
 ## 其他下载镜像
 
@@ -37,7 +37,7 @@ Android：将项目源码导入存储卡/sdcard/AppProjects 目录下 使用AIDE
 
 2.[Gitee镜像](https://gitee.com/shinian-a/Vmq-App/releases)
 
-2.安装至android系统的手机打开进行权限配置和数据配置检测更新即可！
+3.安装至Android系统的手机打开进行权限配置和数据配置完成检测更新即可！
 
 ## 使用说明
 微信关注公众号“微信支付““微信收款助手”！设置打开微信支付宝通知权限
