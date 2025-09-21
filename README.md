@@ -5,7 +5,7 @@
 #### 有任何建议欢迎致信我，如果可能的话可增加功能，如果本项目对您有帮助请给我一个免费的Star⭐
 
 ### App维护暂时停滞
-## Windows软件 [下载适用于Windows端的监控](https://gitee.com/shinian-a/vmq_-pro/releases "长期支持版")
+## Windows软件：[下载适用于Windows端的监控](https://gitee.com/shinian-a/vmq_-pro/releases "长期支持版")
 
 ## 软件架构
 
