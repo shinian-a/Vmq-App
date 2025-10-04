@@ -51,8 +51,8 @@ android软件更新迭代较快，保持更新是唯一不会使业务受到影�
 
 ### 联系我支持我
 您可以通过邮箱致信我：shiniana@qq.com
-<img src="https://s21.ax1x.com/2025/10/04/pV7SeaD.png" alt="微信" width="150" height="150">
-<img src="https://s21.ax1x.com/2025/10/04/pV7SuPH.jpg" alt="支付宝" width="150" height="150">
+<img src="https://s21.ax1x.com/2025/10/04/pV7SeaD.png" alt="微信" width="200" height="200">
+<img src="https://s21.ax1x.com/2025/10/04/pV7SuPH.jpg" alt="支付宝" width="200" height="200">
 
 
 ### 致谢
