@@ -1,7 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     
     
-
     <item       
         android:id="@+id/qun"
         android:title="@string/fk"
@@ -21,6 +21,11 @@
         android:id="@+id/about"
         android:title="@string/gy"
         android:icon="@drawable/menu_gy"/>
+    
+    <item       
+        android:id="@+id/setting"
+        android:title="@string/setting"
+        android:icon="@drawable/menu_setting"/>
     
     <item     
         android:id="@+id/exit"

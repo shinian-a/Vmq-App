@@ -1,17 +1,21 @@
 package com.shinian.pay;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import java.io.InputStream;
+import android.util.Log;
 import java.io.ByteArrayInputStream;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
+import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
-import android.util.Log;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 
+
+/**
+ * 签名管理类
+ */
 
 public class SignCheck {
     private Context context;
@@ -118,7 +122,7 @@ public class SignCheck {
 
         StringBuilder str = new StringBuilder(arr.length * 2);
 
-        for (int i = 0; i <arr.length; i++) {
+        for (int i = 0; i < arr.length; i++) {
             String h = Integer.toHexString(arr[i]);
             int l =h.length();
             if (l == 1)
@@ -144,7 +148,7 @@ public class SignCheck {
             if (this.cer.equals(this.realCer)) {
                 return true;
             }
-        }else{
+        } else {
             Log.e(TAG, "未给定真实的签名 SHA-1 值");
         }
         return false;

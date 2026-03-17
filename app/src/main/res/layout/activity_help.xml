@@ -3,7 +3,9 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
-
+	
+	
+	
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -31,8 +33,8 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:text="@string/help_content2"
-            android:layout_marginBottom="25dp"
-            android:textSize="20sp"
+			android:layout_marginBottom="25dp"
+			android:textSize="20sp"
 			android:textColor="#FF00A8FF"/>
 
 		<TextView
@@ -100,6 +102,34 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:src="@drawable/help_pzsm5"
+			android:adjustViewBounds="true"
+			android:maxHeight="1000px"
+			android:maxWidth="2000px"
+			android:layout_marginBottom="20dp"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/help_06"/>
+
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/help_pzsm6"
+			android:adjustViewBounds="true"
+			android:maxHeight="1000px"
+			android:maxWidth="2000px"
+            android:layout_marginBottom="20dp"/>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/help_07"/>
+
+		<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/help_pzsm7"
 			android:adjustViewBounds="true"
 			android:maxHeight="1000px"
 			android:maxWidth="2000px"/>

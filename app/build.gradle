@@ -1,38 +1,70 @@
-apply plugin: 'com.android.application'
+plugins {
+    id("com.android.application")
+}
+
 
 android {
-    compileSdkVersion 32
-    buildToolsVersion "21.0.0"
-    defaultConfig {
-        applicationId "com.shinian.pay"
-        minSdkVersion 16
-        targetSdkVersion 32
-        versionCode 4
-        versionName "1.3"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
+    namespace = "com.shinian.pay"
+    compileSdk = 36
+
+        defaultConfig {
+            applicationId = "com.shinian.pay"
+            minSdk = 21
+            targetSdk = 35
+            versionCode = 1
+            versionName = "1.0"
+
+            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+            // ABI 过滤，减少 APK 体积
+            ndk {
+                abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            }
+        }
+
+
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    // 强制排除旧版本 Kotlin 依赖
+    configurations.all {
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    testCompile 'junit:junit:4.12'
+    // 本地 JAR（必要的第三方 SDK）
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // ========== AndroidX 核心依赖 ==========
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.core:core-ktx:1.10.1'
+
+    // ========== UI 组件 ==========
+    implementation 'com.google.android.material:material:1.9.0'
     
-    /*  androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.android.support:appcompat-v7:26.+'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    //compile 'com.google.zxing:core:3.3.0'
-    compile 'com.squareup.okhttp3:okhttp:3.7.0'
-    compile 'com.squareup.okio:okio:1.12.0'*/
+    // ========== 网络请求 ==========
+    implementation 'com.squareup.okhttp3:okhttp:4.9.2'
+    
+    // ========== Kotlin 标准库（统一版本，解决冲突）==========
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.8.10'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.10'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10'
+
+    // ========== 测试依赖 ==========
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }

@@ -1,27 +1,44 @@
 <resources>
+    <string name="layout_scan">扫描二维码</string>
+    <string name="layout_album">相册</string>
+    <string name="layout_focus_qrcode">请对准二维码进行扫描</string>
+    <string name="note_processing">处理中...</string>
+    <string name="note_identify_failed">识别失败</string>
+    <string name="note_scan_failed">扫描失败</string>
+    <string name="note_no_flashlight">暂时无法开启闪光灯</string>
     <string name="app_name">V免签监控端_Pro</string>
+	<string name="HelpActivity">帮助文档</string>
+    <string name="WxPayActivity">微信打赏</string>
+    <string name="SettingActivity">软件设置</string>
+	<string name="FeedActivity">意见反馈</string>
     <string name="skm">请长按保存收款码</string>
     <string name="WeChat">打开微信扫一扫</string>
     <string name="url"> 通知地址：请手动配置</string>
     <string name="key"> 通讯密钥：请手动配置</string>
+    <string name="sm">扫码配置</string>
     <string name="pz">手动配置</string>
     <string name="xt">检测心跳</string>
     <string name="jt">检测监听</string>
-    <string name="admin_url">打开后台</string>
-    <string name="bq">2022 联系我：十年. Provide technical service support.</string>
+    <string name="ht_state">监控日志(删除)：</string> 
+    <string name="dl"></string>
+    <string name="bq">Copyright © 2022 十年. All rights reserved.</string>
     <string name="fk">反馈QQ群</string>
     <string name="fx">分享软件</string>
     <string name="ds">打赏作者</string>
     <string name="gy">关于/帮助</string>
+    <string name="setting">软件设置</string>
+    <string name="wxpay_ts">请截图保存赞赏码~点击赞赏码打开微信扫一扫</string>
     <string name="tc">退出程序</string>
     <string name="qx">V免签监听服务[必选]</string>
     <string name="help_title">V免签监控端配置文档</string>
-    <string name="help_content">1.必须要要在监控端手机上登录同一个微信或支付宝账户否则不能回调(上传哪个账户的收款码就登录哪个账户)</string>
-    <string name="help_content2">2.以下设置“必须”按照图片中内容配置否则监控端会在手机优化内存时被杀死从而无法监听到通知回调</string>
+    <string name="help_content">1.必须要在安装监控端手机上登录同一个微信或支付宝账户否则不能监听回调(后台上传哪个账户的收款码就登录哪个账户)\n1.1 2.0版本新增扫码配置，您可以通过扫描后台二维码或保存截图至相册配置\n1.2V免签监控端_Pro并不适配所有手机，当您的手机无法正常运行时请使用模拟器挂机或更换Android手机！\n1.3在使用过程中软件申请的权限是必然的，您必须给予相应权限否则软件无法正常运行\n1.4请设置软件自启动后台运行和忽略电池白名单优化，锁定WiFi(待机后WiFi将不会休眠)关闭省电模式等权限并保持监控端24H可持久化后台运行\n\n感谢您使用V免签监控端_Pro，使用过程中若您发现任何BUG可以通过邮箱向我致信！</string>
+    <string name="help_content2">2.以下设置“务必”按照图片中内容配置否则监控端会在手机优化内存时被杀死从而无法监听到通知回调</string>
     <string name="help_01">登录V免签后台复制配置数据</string>
     <string name="help_02">监控端配置数据</string>
     <string name="help_03">开启微信通知权限</string>
     <string name="help_04">开启支付宝通知权限</string>
     <string name="help_05">开启V免签监控端自启动权限[允许后台运行]</string>
-      
+    <string name="help_06">勾选不允许电池优化</string>
+    <string name="help_07">将软件锁定后台</string>
+ 
 </resources>

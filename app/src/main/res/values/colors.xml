@@ -5,4 +5,14 @@
     <!--状态栏颜色-->
     <color name="colorPrimaryDark">#FF2D2D2D</color>
     <color name="colorAccent">#FF8200FF</color>
+    
+    <color name="note_text_color">#aaaaaa</color>
+
+    <!-- QRCode scanner color begin -->
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="result_view">#B0000000</color>
+    <color name="viewfinder_frame">#90FFFFFF</color>
+    <color name="result_point_color">#C0FFFF00</color>
+    <color name="laser_color">#6F87F3</color>
+    <color name="corner_color">#6F87F3</color>
 </resources>
