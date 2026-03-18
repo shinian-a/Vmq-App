@@ -39,6 +39,7 @@ import android.os.Message;
 
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.view.*;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -49,14 +50,7 @@ import android.util.DisplayMetrics;
 
 
 import android.util.Log;
-import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
 import android.view.View.OnLongClickListener;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -88,6 +82,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -106,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
     private static String TAG = "MainActivity";
     private static String host;
     private static String key;
-    private static TextView LogsTextView;
+    public static TextView LogsTextView;
     private static LinearLayout logs_linear_layout;
     private int id = 0;
     //定义 Bitmap变量
@@ -125,74 +120,41 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
 
     private static final String ALIPAY_PERSON = "https://qr.alipay.com/fkx12542rpb5fljmhxlal35";
 
-    private Thread dlThread;    
+    private Thread dlThread;
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        //实际分辨率
-        WindowManager windowManager = getWindow().getWindowManager();
-        Point point = new Point();
-        windowManager.getDefaultDisplay().getRealSize(point);
-        //屏幕实际宽度（像素个数）
-        int width = point.x;
-        //屏幕实际高度（像素个数）
-        int height = point.y;
-
-        //实际分辨率2
-        WindowManager windowManager2 = getWindow().getWindowManager();
-        DisplayMetrics metrics = new DisplayMetrics();
-        windowManager.getDefaultDisplay().getRealMetrics(metrics);
-        //屏幕实际宽度（像素个数）
-        int width2 = metrics.widthPixels;
-        //屏幕实际高度（像素个数）
-        int height2 = metrics.heightPixels;
-
-        // 锁定屏幕
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
+        // 自动适配屏幕
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         setContentView(R.layout.activity_main);
-//        try {
-//            if (height >= 2400) {
-//                setContentView(R.layout.activity_main);
-//                //Toast.makeText(getApplication(), "当前分辨率" + height + "x" + width, Toast.LENGTH_SHORT).show();
-//            } else if (height <= 1920 && height > 1600) {
-//                setContentView(R.layout.activity_main_xdpi);
-//            } else if (height <= 1280 && height > 960) {
-//                setContentView(R.layout.activity_main_xdpi);
-//            } else {
-//                setContentView(R.layout.activity_main);
-//                //Toast.makeText(getApplication(), "暂未适配1280×720分辨率以下屏幕\n获取分辨率失败", Toast.LENGTH_LONG).show();
-//            }
-//        } catch (Exception e) {
-//            String error = e.getMessage();
-//            Toast.makeText(getApplication(), error , Toast.LENGTH_SHORT).show();
-//        }
 
         //沉浸式状态栏
-        /*
-         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
-         Window window = ge"tWiIt's not that simple now. None ndow();
-         window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-         }*/
+//         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+//         Window window = getWindow();
+//         window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//         }
 		//查找组件
 		txthost = (TextView) findViewById(R.id.txt_host);
 		txtkey = (TextView) findViewById(R.id.txt_key);
         LogsTextView = (TextView) findViewById(R.id.state_logs);
         logs_linear_layout = (LinearLayout) findViewById(R.id.logs_linear_layout);
         LogsTextView.setOnLongClickListener((OnLongClickListener) this);//长按
+        
+        // 设置底部版权信息文本的下划线
+        TextView bqTextView = (TextView) findViewById(R.id.bq);
+        if (bqTextView != null) {
+            bqTextView.setPaintFlags(bqTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        }
+        
         startService(new Intent(MainActivity.this, ForeService.class)); // 开始前台服务
         sj_dl = (TextView) findViewById(R.id.sj_dl);
 
-
-        //判断签名校验SHA-1 --检测是否重新签名
-        //SignCheck signCheck = new SignCheck(this, "0F:85:43:C2:2E:8E:58:1B:96:88:C6:7C:1E:97:1E:0A:1C:55:D2:5F");
-        //if (signCheck.check()) {
             //调用App方法检查更新
             try{
             App();
             }catch(Exception e){
-                
+
             }
             //申请读写权限
             //requestMyPermissions();
@@ -200,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
             //接收并设置日志信息
             SharedPreferences read1 = getSharedPreferences("items", MODE_PRIVATE);
             String logsStr = read1.getString("logsStr", "");
-            if (logsStr.equals("")) { 
+            if (logsStr.equals("")) {
                 LogsTextView.setText("日志：null");
             } else {
                 LogsTextView.setText(logsStr);
@@ -225,75 +187,13 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable(){
 
                         @Override
-                        public void run() {                    
+                        public void run() {
                             WindowManager.LayoutParams lp = getWindow().getAttributes();
                             lp.screenBrightness = Float.valueOf(ld) * (1f / 255f);//亮度值0~255
-                            getWindow().setAttributes(lp);                     
+                            getWindow().setAttributes(lp);
                         }
                     }, 3000);
             }
-
-
-
-            //检测支付宝是否安装
-            /*
-             if (checkQQInstalled(this, "com.eg.android.AlipayGphone")) {              
-             } else {
-             AlertDialog.Builder alidialog = new AlertDialog.Builder(this);
-             alidialog.setCancelable(false); //设置是否可以点击对话框外部取消
-             alidialog.setTitle("温馨提示");
-             alidialog.setMessage("当前您未安装支付宝！请前往支付宝官网或点击下方按钮下载最新版本！");
-             alidialog.setPositiveButton("下载支付宝", new DialogInterface.OnClickListener() {
-
-             @Override
-             public void onClick(DialogInterface dia, int which) {
-             Intent intent_d = new Intent();
-             intent_d.setAction("android.intent.action.VIEW");
-             Uri content_url = Uri.parse("https://ds.alipay.com/");
-             intent_d.setData(content_url);
-             startActivity(intent_d);
-             }
-             })
-             .setNegativeButton("关闭提示", new DialogInterface.OnClickListener() {
-
-             @Override
-             public void onClick(DialogInterface dia, int which) {
-             Toast.makeText(getApplication(), "请安装支付宝！", Toast.LENGTH_SHORT).show();
-             }
-             })
-             .create();
-             alidialog.show();
-             }
-
-             //判断微信是否安装
-             if (checkQQInstalled(this, "com.tencent.mm")) {              
-             } else {
-             AlertDialog.Builder wxdialog = new AlertDialog.Builder(this);
-             wxdialog.setCancelable(false); //设置是否可以点击对话框外部取消
-             wxdialog.setTitle("温馨提示");
-             wxdialog.setMessage("当前您未安装微信！请前往微信官网或点击下方按钮下载最新版本！");
-             wxdialog.setPositiveButton("下载微信", new DialogInterface.OnClickListener() {
-
-             @Override
-             public void onClick(DialogInterface dia, int which) {
-             Intent intent_d = new Intent();
-             intent_d.setAction("android.intent.action.VIEW");
-             Uri content_url = Uri.parse("https://weixin.qq.com/");
-             intent_d.setData(content_url);
-             startActivity(intent_d);
-             }
-             })
-             .setNegativeButton("关闭提示", new DialogInterface.OnClickListener() {
-
-             @Override
-             public void onClick(DialogInterface dia, int which) {
-             Toast.makeText(MainActivity.this, "请安装微信！", Toast.LENGTH_SHORT).show();
-             }
-             })
-             .create();
-             wxdialog.show();
-             }
-             */
 
             /*
              //检测电池白名单是否启用
@@ -310,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
                     //创建弹窗对象
                     AlertDialog.Builder qx = new AlertDialog.Builder(MainActivity.this);
                     //alert = builder.setIcon(R.mipmap.ic_icon_fish)
-                    qx.setIcon(R.drawable.gy);
+                    qx.setIcon(R.drawable.menu_gy);
                     qx.setTitle("温馨提示：");
                     qx.setMessage("当前你未授权收款插件读取通知栏权限，请前往授权后再继续操作");
                     qx.setCancelable(false); //设置是否可以点击对话框外部取消
@@ -323,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
                         });
                     qx.setNeutralButton("暂不授权", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {     
+                            public void onClick(DialogInterface dialog, int which) {
                                 Toast.makeText(getApplication(), "请给予监听权限！否则无法正常运行", Toast.LENGTH_LONG).show();
                             }
                         });
@@ -344,72 +244,6 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
                 txtkey.setText(" 通讯密钥：" + key);
                 isOk = true;
             }
-            //签名错误
-//        } else {
-//            //TODO 签名错误
-//            AlertDialog.Builder qmjy = new AlertDialog.Builder(MainActivity.this);
-//            qmjy.setIcon(R.drawable.jg);
-//            qmjy.setTitle("警告：");
-//            qmjy.setMessage("当前您使用的是非官方正版软件！请于官方地址下载正版软件使用");
-//            qmjy.setCancelable(false); //设置是否可以点击对话框外部取消
-//            qmjy.setPositiveButton("前往下载", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        //跳转浏览器
-//                        Intent intent_d = new Intent();
-//                        intent_d.setAction("android.intent.action.VIEW");
-//                        Uri content_url = Uri.parse("https://github.com/shinian-a/Vmq-App");
-//                        intent_d.setData(content_url);
-//                        startActivity(intent_d);
-//                    }
-//                });
-//			qmjy.show();//显示
-//        }
-
-        //校验是否有去除签名校验hook 
-        if (checkApplication()) {
-            //Toast.makeText(this, "签名正确", Toast.LENGTH_LONG).show();
-        } else {
-            AlertDialog.Builder qm = new AlertDialog.Builder(MainActivity.this);
-            qm.setIcon(R.drawable.jg);
-            qm.setTitle("警告：");
-            qm.setMessage("当前您使用的是非官方正版软件！请于官方地址下载正版软件使用");
-            qm.setCancelable(false); //设置是否可以点击对话框外部取消
-            qm.setPositiveButton("前往下载", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //跳转浏览器
-                        Intent intent_d = new Intent();
-                        intent_d.setAction("android.intent.action.VIEW");
-                        Uri content_url = Uri.parse("https://github.com/shinian-a/Vmq-App");
-                        intent_d.setData(content_url);
-                        startActivity(intent_d);
-                    }
-                });
-			qm.show();//显示
-        }
-
-        //验签检测动态PM代理
-        if (checkPMProxy()) {         
-        } else {
-            AlertDialog.Builder qm3 = new AlertDialog.Builder(MainActivity.this);
-            qm3.setIcon(R.drawable.jg);
-            qm3.setTitle("警告：");
-            qm3.setMessage("当前您使用的是非官方正版软件！请于官方地址下载正版软件使用");
-            qm3.setCancelable(false); //设置是否可以点击对话框外部取消
-            qm3.setPositiveButton("前往下载", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //跳转浏览器
-                        Intent intent_d = new Intent();
-                        intent_d.setAction("android.intent.action.VIEW");
-                        Uri content_url = Uri.parse("https://github.com/shinian-a/Vmq-App");
-                        intent_d.setData(content_url);
-                        startActivity(intent_d);
-                    }
-                });
-            qm3.show();//显示
-        }
 
 	}
 
@@ -593,30 +427,13 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
     public void App() throws Exception{
         //检查版本号是否最新接口
         String urlPath = new String("http://w.t3yanzheng.com/A729B02347E855EC");  
-        //String urlPath = new String("http://localhost:8080/Test1/HelloWorld?name=丁丁".getBytes("UTF-8"));
 
-        
         //当前软件版本号
         Version = Integer.parseInt(getAppVersionCode());
         String param="ver=" + URLEncoder.encode(getAppVersionCode(), "UTF-8");
 
         //建立连接
-        URL url=new URL(urlPath);
-        HttpURLConnection httpConn=(HttpURLConnection)url.openConnection();
-
-        //设置参数
-        httpConn.setDoOutput(true);     //需要输出
-        httpConn.setDoInput(true);      //需要输入
-        httpConn.setUseCaches(false);   //不允许缓存
-        httpConn.setRequestMethod("POST");      //设置POST方式连接
-
-        //设置请求属性
-        httpConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        httpConn.setRequestProperty("Connection", "Keep-Alive");// 维持长连接
-        httpConn.setRequestProperty("Charset", "UTF-8");
-
-        //连接,也可以不用明文connect，使用下面的httpConn.getOutputStream()会自动connect
-        httpConn.connect();
+        HttpURLConnection httpConn = getHttpURLConnection(urlPath);
 
         //建立输入流，向指向的URL传入参数
         DataOutputStream dos=new DataOutputStream(httpConn.getOutputStream());
@@ -667,6 +484,27 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
            }
         }  
         
+    }
+
+    @NotNull
+    private static HttpURLConnection getHttpURLConnection(String urlPath) throws IOException {
+        URL url=new URL(urlPath);
+        HttpURLConnection httpConn=(HttpURLConnection)url.openConnection();
+
+        //设置参数
+        httpConn.setDoOutput(true);     //需要输出
+        httpConn.setDoInput(true);      //需要输入
+        httpConn.setUseCaches(false);   //不允许缓存
+        httpConn.setRequestMethod("POST");      //设置POST方式连接
+
+        //设置请求属性
+        httpConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        httpConn.setRequestProperty("Connection", "Keep-Alive");// 维持长连接
+        httpConn.setRequestProperty("Charset", "UTF-8");
+
+        //连接,也可以不用明文connect，使用下面的httpConn.getOutputStream()会自动connect
+        httpConn.connect();
+        return httpConn;
     }
 
     public String getHtml(String path) throws Exception {  
@@ -880,17 +718,18 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
 		return true;
 	}
 
-    //在选项菜单打开以后会调用这个方法，设置menu图标显示（icon）
+    //在选项菜单打开以后会调用这个方法，设置 menu 图标显示（icon）
     @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
         if (menu != null) {
-            if (menu.getClass().getSimpleName().equalsIgnoreCase("MenuBuilder")) {
+            // 通过反射让菜单显示图标
+            if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
                 try {
                     Method method = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
                     method.setAccessible(true);
                     method.invoke(menu, true);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "onMenuOpened: 显示菜单图标失败", e);
                 }
             }
         }
@@ -991,7 +830,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
         //关于
         else if (itemId == R.id.about) {
             AlertDialog.Builder gy = new AlertDialog.Builder(this);
-            gy.setIcon(R.drawable.gy);
+            gy.setIcon(R.drawable.menu_gy);
             gy.setTitle("关于本软件：");
             gy.setCancelable(false); //设置是否可以点击对话框外部取消
             gy.setMessage("简介：\n这是一款基于V免签开发的免签支付接口App监控端\n修复了原版监控支付宝不回调等BUG长期维护并提供个人免费使用\n在您使用本软件前请注意：\n该软件版权归作者所有请勿破解倒卖本软件\n部分申请的权限是必要的拒绝将导致监控功能失效\n喜欢本项目就赞助一下开发者吧~\nPS：使用本软件建议开启软件自启动权限！各大厂商手机自行百度寻找答案\n\nApp使用协议：\n\n说明：\n该软件由作者十年开发并提供技术服务支持并发布免费使用\n1、所有用户在下载并浏览V免签监控端_Pro时均被视为已经仔细阅读本条款并完全同意。\n2、软件完全免费可自由使用学习并分享，您可以将它分享给您的朋友们使用。\n3、使用该软件应当遵守法律法规若侵犯了第三方知识产权或其他权益需本人承担全部责任。\n作者对此不承担任何责任。\n4、V免签监控端_Pro需要获取一定的应用权限例如内存读写，通知监听等请务必开启权限否则软件无法正常运行。\n5、如果您使用的是盗版软件，出现的一切风险作者对此不承担任何责任。\n6、用户明确并同意因其使用本App而产生的一切后果由其本人承担，作者对此不承担任何责任。\n7、我们深知个人信息对您的重要性，并会尽全力保护您的个人信息安全可靠。\n\n\"确保您已同意以上协议否则请卸载本软件！\"\n\n联系作者反馈请到设置项~")
@@ -1370,9 +1209,13 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
                                 sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "心跳返回：" + msg);
                             }
                             //注意：响应内容在经过JSON和抛异常时需要使用新变量去接收信息进行Toast str
-                            Toast.makeText(MainActivity.this, "心跳返回：" + str, Toast.LENGTH_LONG).show();
+                            //Toast.makeText(MainActivity.this, "心跳返回：" + str, Toast.LENGTH_LONG).show();
                         } else {
-                            Toast.makeText(MainActivity.this, "心跳返回错误！", Toast.LENGTH_LONG).show();                          
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "心跳返回错误：" + msg);
+                            }
+                            //Toast.makeText(MainActivity.this, "心跳返回错误！", Toast.LENGTH_LONG).show();
                         }
                     } catch (JSONException e) {//抛IO流异常 创建JSONobject需抛JSON异常
                         String error = e.getMessage();
@@ -1445,15 +1288,26 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
 
     //联系作者
     public void author(View v) {
-        // 跳转之前，可以先判断手机是否安装QQ
+        // 跳转之前，可以先判断手机是否安装 QQ
         if (isQQClientAvailable(this)) {
-            // 跳转到客服的QQ
+            // 跳转到客服的 QQ
             String url = "mqqwpa://im/chat?chat_type=wpa&uin=1614790395";
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-            // 跳转前先判断Uri是否存在，如果打开一个不存在的Uri，App可能会崩溃
+            // 跳转前先判断 Uri 是否存在，如果打开一个不存在的 Uri，App 可能会崩溃
             if (isValidIntent(this, intent)) {
                 startActivity(intent);
             }
+        }
+    }
+    
+    //打开作者网站
+    public void openAuthorWebsite(View v) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://shinian-a.github.io/"));
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "无法打开网页，请检查浏览器设置", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1703,7 +1557,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
         }
     }
 
-    //获取当前程序版本号(对消费者不可见的版本号)
+    //获取当前程序版本号
     public String getAppVersionCode() {
         String versioncode = "";
         try {

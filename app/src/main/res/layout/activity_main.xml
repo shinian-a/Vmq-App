@@ -1,25 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:orientation="vertical"
-	android:padding="16dp"
+	android:fillViewport="true"
 	tools:context=".MainActivity">
+
+<LinearLayout
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	paddingStart="10dp"
+	paddingEnd="10dp"
+	paddingTop="6dp"
+	paddingBottom="12dp">
 
 	<TextView
 		android:id="@+id/txt_host"
 		android:layout_width="match_parent"
-	android:layout_height="wrap_content"
+		android:layout_height="wrap_content"
 		android:textIsSelectable="true"
 		android:text="@string/url"
-		android:textColor="#FF000000"
-		android:textSize="18sp"
+		android:textColor="?android:attr/textColorPrimary"
+		android:textSize="13sp"
 		android:textStyle="bold|italic"
-		android:paddingTop="16dp"
-		android:paddingBottom="8dp"/>
+		android:paddingTop="6dp"
+		android:paddingBottom="3dp"
+		android:maxLines="2"
+		android:ellipsize="end"/>
 
 	<TextView
 		android:id="@+id/txt_key"
@@ -27,131 +37,152 @@
 		android:layout_height="wrap_content"
 		android:textIsSelectable="true"
 		android:text="@string/key"
-		android:textColor="#FF000000"
+		android:textColor="?android:attr/textColorPrimary"
 		android:textStyle="bold|italic"
-		android:textSize="18sp"
-		android:paddingTop="8dp"
-		android:paddingBottom="16dp"/>
+		android:textSize="13sp"
+		android:paddingTop="3dp"
+		android:paddingBottom="6dp"
+		android:maxLines="2"
+		android:ellipsize="end"/>
 
 	<Button
 		android:id="@+id/btn_sm"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"
+		android:layout_height="42dp"
 		android:onClick="startQrCode"
 		android:text="@string/sm"
-		android:layout_marginTop="16dp"
-		android:background="#FF49DEFF"
-		android:singleLine="true"
-		android:textStyle="italic"/>
+		android:layout_marginTop="6dp"
+		android:background="@drawable/ripple"
+		android:maxLines="1"
+		android:textStyle="bold"
+		android:textSize="12sp"/>
 
 	<Button
 		android:id="@+id/btn_input"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"
+		android:layout_height="42dp"
 		android:onClick="doInput"
 		android:text="@string/pz"
-		android:layout_marginTop="16dp"
-		android:background="#FF49FFE9"
-		android:singleLine="true"
-		android:textStyle="italic"/>
+		android:layout_marginTop="6dp"
+		android:background="@drawable/ripple"
+		android:maxLines="1"
+		android:textStyle="bold"
+		android:textSize="12sp"/>
 
 	<Button
 		android:id="@+id/btn_start"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"
+		android:layout_height="42dp"
 		android:onClick="doStart"
 		android:text="@string/xt"
-		android:layout_marginTop="16dp"
-		android:background="#FFFFDEDE"
-		android:singleLine="true"
-		android:textStyle="italic"/>
+		android:layout_marginTop="6dp"
+		android:background="@drawable/ripple"
+		android:maxLines="1"
+		android:textStyle="bold"
+		android:textSize="12sp"/>
 
 	<Button
 		android:id="@+id/btn_checkpush"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"
+		android:layout_height="42dp"
 		android:onClick="checkPush"
 		android:text="@string/jt"
-		android:layout_marginTop="16dp"
-		android:background="#FFCAC1FF"
-		android:shadowColor="#FFB687FF"
-		android:singleLine="true"
-		android:textStyle="italic"/>
+		android:layout_marginTop="6dp"
+		android:background="@drawable/ripple"
+		android:maxLines="1"
+		android:textStyle="bold"
+		android:textSize="12sp"/>
 
+	<!-- 日志区域：使用 layout_weight 填充剩余空间 -->
 	<LinearLayout
 		android:orientation="vertical"
 		android:layout_width="match_parent"
 		android:layout_height="0dp"
 		android:layout_weight="1"
-		android:layout_marginTop="16dp">
+		android:layout_marginTop="6dp">
 
+		<!-- 状态栏标题：使用 weight 实现左右自适应 -->
 		<LinearLayout
 			android:orientation="horizontal"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:gravity="center_vertical">
+			android:gravity="center_vertical"
+			android:layout_marginBottom="4dp">
 
 			<TextView
-				android:layout_width="0dp"
-				android:layout_height="wrap_content"
-				android:layout_weight="1"
-				android:text="@string/ht_state"
-				android:textAppearance="?android:attr/textAppearanceLarge"
-				android:onClick="Logs"/>
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:layout_weight="1"
+					android:text="@string/ht_state"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:onClick="Logs"
+					android:maxLines="1"
+					android:ellipsize="end"
+					android:textSize="13sp"/>
 
 			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textColor="#FFFF0000"
-				android:textStyle="bold|italic"
-				android:id="@+id/sj_dl"
-				android:text="@string/dl"
-				android:onClick="dl"
-				style="@style/AppTheme"/>
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textColor="#4CAF50"
+					android:textStyle="bold|italic"
+					android:id="@+id/sj_dl"
+					android:text="@string/dl"
+					android:onClick="dl"
+					android:maxLines="1"
+					style="@style/AppTheme"
+					android:textSize="12sp"
+					android:layout_marginStart="8dp"/>
 
 		</LinearLayout>
 
+		<!-- 日志内容区域：使用 match_parent 填充父容器 -->
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
 			android:layout_weight="1"
 			android:orientation="vertical"
-			android:id="@+id/logs_linear_layout">
+			android:id="@+id/logs_linear_layout"
+			android:layout_marginTop="1dp"
+			android:minHeight="200dp">
 
 			<TextView
-				android:id="@+id/state_logs"
-				android:layout_width="match_parent"
-				android:layout_height="0dp"
-				android:layout_weight="1"
-				android:textIsSelectable="true"
-				android:background="#4D4C4C"
-				android:textColor="#07DD0C"
-				android:padding="8dp"
-				android:scrollbars="vertical"/>
-
+					android:id="@+id/state_logs"
+					android:layout_width="match_parent"
+					android:layout_height="match_parent"
+					android:textIsSelectable="true"
+					android:background="#000000"
+					android:textColor="#07DD0C"
+					android:padding="5dp"
+					android:scrollbars="vertical"
+					android:fontFamily="monospace"
+					android:textSize="10sp"
+					android:lineSpacingExtra="2dp"
+					android:gravity="top"/>
 		</LinearLayout>
 
+		<!-- 底部版权信息：可点击链接 -->
 		<LinearLayout
 			android:orientation="vertical"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:layout_marginTop="16dp">
+			android:layout_marginTop="6dp"
+			android:layout_marginBottom="8dp">
 
 			<TextView
+				android:id="@+id/bq"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:text="@string/bq"
 				android:textAppearance="?android:attr/textAppearanceSmall"
 				android:gravity="center"
-				android:onClick="author"
-				android:textColor="#FFFF0000"/>
+				android:textColor="#607D8B"
+				android:textSize="14sp"
+				android:textStyle="bold"
+				android:onClick="openAuthorWebsite"/>
 
 		</LinearLayout>
 
 	</LinearLayout>
 
 </LinearLayout>
+</ScrollView>

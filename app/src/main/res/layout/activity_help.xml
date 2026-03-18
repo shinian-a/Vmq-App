@@ -45,7 +45,7 @@
 		<ImageView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:src="@drawable/help_pzsm"
+			android:src="@drawable/help_pzsm3"
 			android:adjustViewBounds="true"
 			android:maxHeight="600px"
 			android:maxWidth="1200px"
@@ -59,7 +59,7 @@
 		<ImageView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:src="@drawable/help_pzsm2"
+			android:src="@drawable/help_pzsm3"
 			android:adjustViewBounds="true"
 			android:maxHeight="1500px"
 			android:maxWidth="1500px"
@@ -101,7 +101,7 @@
 		<ImageView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:src="@drawable/help_pzsm5"
+			android:src="@drawable/help_pzsm3"
 			android:adjustViewBounds="true"
 			android:maxHeight="1000px"
 			android:maxWidth="2000px"

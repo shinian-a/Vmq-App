@@ -8,6 +8,7 @@ import android.icu.text.SimpleDateFormat;
 import android.os.*;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
+import android.widget.TextView;
 import androidx.core.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,6 +27,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.shinian.pay.MainActivity;
 
 
 public class PayNotificationListenerService extends NotificationListenerService {
@@ -56,9 +59,9 @@ public class PayNotificationListenerService extends NotificationListenerService 
         // 初始化复用的 OkHttpClient
         if (okHttpClient == null) {
             okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS)
-                .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-                .build();
+                    .connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS)
+                    .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+                    .build();
         }
 
         newThread = new Thread(() -> {
@@ -71,18 +74,30 @@ public class PayNotificationListenerService extends NotificationListenerService 
                 String t = String.valueOf(new Date().getTime());
                 String sign = md5(t + key);
                 Request request = new Request.Builder()
-                    .url("http://" + host + "/appHeart?t=" + t + "&sign=" + sign)
-                    .method("GET", null)
-                    .build();
+                        .url("http://" + host + "/appHeart?t=" + t + "&sign=" + sign)
+                        .method("GET", null)
+                        .build();
 
                 Call call = okHttpClient.newCall(request);
                 call.enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         final String error = e.getMessage();
-                        new Handler(Looper.getMainLooper()).post(() ->
-                            Toast.makeText(getApplicationContext(), "心跳状态错误，请重新配置或切换网络!\n错误详情：" + error, Toast.LENGTH_LONG).show()
-                        );
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if (MainActivity.LogsTextView != null && !MainActivity.LogsTextView.getText().toString().contains("心跳状态错误")) {
+                                    //发送监听日志
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                        sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "心跳状态错误，请重新配置或切换网络环境!\n错误详情：" + error);
+                                    }
+                                    Toast.makeText(getApplicationContext(), "心跳状态错误，请重新配置或切换网络!", Toast.LENGTH_SHORT).show();
+                                }
+
+
+                            }
+                        });
                     }
 
                     @Override
@@ -92,7 +107,7 @@ public class PayNotificationListenerService extends NotificationListenerService 
                 });
 
                 try {
-                    Thread.sleep(30 * 1000);
+                    Thread.sleep(50 * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -100,11 +115,12 @@ public class PayNotificationListenerService extends NotificationListenerService 
         });
         newThread.start();
     }
+
     //申请设备电源锁
     @SuppressLint("InvalidWakeLockTag")
     public void acquireWakeLock(Context context) {
         if (null == mWakeLock) {
-            PowerManager pm = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
             mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "WakeLock");
             if (null != mWakeLock) {
                 mWakeLock.acquire();
@@ -114,7 +130,7 @@ public class PayNotificationListenerService extends NotificationListenerService 
 
 
     /**
-     *  当收到一条消息的时候回调，sbn即收到的消息
+     * 当收到一条消息的时候回调，sbn即收到的消息
      */
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
@@ -153,22 +169,22 @@ public class PayNotificationListenerService extends NotificationListenerService 
                                     appPush(1, Double.valueOf(money));
                                     //appPush2(1, Double.valueOf(money));//再次发送回调数据
                                 } else {
-                                    Handler handlerThree=new Handler(Looper.getMainLooper());
-                                    handlerThree.post(new Runnable(){
-                                            public void run() {
-                                                Toast.makeText(getApplicationContext() , "监听到微信收款消息但未匹配到金额！", Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
+                                    Handler handlerThree = new Handler(Looper.getMainLooper());
+                                    handlerThree.post(new Runnable() {
+                                        public void run() {
+                                            Toast.makeText(getApplicationContext(), "监听到微信收款消息但未匹配到金额！", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
                             } else {
-                               //这里处理非付款的逻辑
+                                //这里处理非付款的逻辑
                             }
                         }
                     }
                 } else if (pkg.equals("com.eg.android.AlipayGphone")) {
                     if (!TextUtils.isEmpty(title) || !TextUtils.isEmpty(content)) {
                         //通知消息匹配 contains 方法匹配包含关键字
-                        if (title.contains("成功收款") || content.contains("已转入余额") || content.contains("通过扫码向你付款") || content.contains("已转入") || title.contains("已转入余额") || title.contains("通过扫码向你付款") || title.contains("成功收款")) {
+                        if (title.contains("成功收款") && content.contains("已转入余额") || content.contains("通过扫码向你付款")) {
                             //获取标题具体收款金额
                             String money = getMoney(title);
                             //如果获取标题金额失败再获取一次内容金额
@@ -181,21 +197,15 @@ public class PayNotificationListenerService extends NotificationListenerService 
                                 appPush(2, Double.valueOf(money));
                                 //appPush2(2, Double.valueOf(money));//再次发送回调数据
                             } else {
-                                Handler handlerThree=new Handler(Looper.getMainLooper());
-                                handlerThree.post(new Runnable(){
-                                        public void run() {
-                                            Toast.makeText(getApplicationContext() , "监听到支付宝收款消息但未匹配到金额！", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+                                Handler handlerThree = new Handler(Looper.getMainLooper());
+                                handlerThree.post(new Runnable() {
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(), "监听到支付宝收款消息但未匹配到金额！", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
 
                             }
-                            } else if (title.contains("交易提醒") || content.contains("支出")) {
-                            String money = getMoney(title);
-                            if (money != null || !money.equals("")) {
-                                Toast.makeText(getApplication(), "转账订单：支付宝转账" + money + "元", Toast.LENGTH_SHORT).show();
-                            }
-                                //支付宝店员监听
-                            } else if (title.contains("店员通") || content.contains("支付宝成功收款")) {
+                        }else if (title.contains("店员通") || content.contains("支付宝成功收款")) {
                             String money = getMoney(content);
                             if (money == null || !money.equals("")) {
                                 money = getMoney(title);
@@ -206,12 +216,12 @@ public class PayNotificationListenerService extends NotificationListenerService 
                                 appPush(2, Double.valueOf(money));
                                 //appPush2(2, Double.valueOf(money));//再次发送回调数据
                             } else {
-                                Handler handlerThree=new Handler(Looper.getMainLooper());
-                                handlerThree.post(new Runnable(){
-                                        public void run() {
-                                            Toast.makeText(getApplicationContext() , "监听到支付宝店员收款消息但未匹配到金额！", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+                                Handler handlerThree = new Handler(Looper.getMainLooper());
+                                handlerThree.post(new Runnable() {
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(), "监听到支付宝店员收款消息但未匹配到金额！", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
                         }
                     }
@@ -221,12 +231,12 @@ public class PayNotificationListenerService extends NotificationListenerService 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "测试收款监听权限正常！");
                         }
-                        Handler handlerThree=new Handler(Looper.getMainLooper());
-                        handlerThree.post(new Runnable(){
-                                public void run() {
-                                    Toast.makeText(getApplicationContext() , "监听权限正常!", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+//                        Handler handlerThree = new Handler(Looper.getMainLooper());
+//                        handlerThree.post(new Runnable() {
+//                            public void run() {
+//                                //Toast.makeText(getApplicationContext(), "监听权限正常!", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
                     }
                 }
             }
@@ -238,30 +248,32 @@ public class PayNotificationListenerService extends NotificationListenerService 
     public void onNotificationRemoved(StatusBarNotification sbn) {
 
     }
+
     //当连接成功时调用，一般在开启监听后会回调一次该方法
     @Override
     public void onListenerConnected() {
         //开启心跳线程
         initAppHeart();
         //发送监听日志
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable(){
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
 
-                @Override
-                public void run() {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "监听服务开启成功！");
-                    }
+            @Override
+            public void run() {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "监听服务开启成功！");
                 }
-            }, 1000);
+            }
+        }, 1000);
         Handler handlerThree = new Handler(Looper.getMainLooper());
-        handlerThree.post(new Runnable(){
-                public void run() {
-                    Toast.makeText(getApplicationContext() , "监听服务开启成功!", Toast.LENGTH_SHORT).show();
-                }
-            });
+        handlerThree.post(new Runnable() {
+            public void run() {
+                //Toast.makeText(getApplicationContext(), "监听服务开启成功!", Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
     }
+
     //通知回调过程
     public void appPush(final int type, final double price) {
         SharedPreferences read = getSharedPreferences("shinian", MODE_PRIVATE);
@@ -280,88 +292,89 @@ public class PayNotificationListenerService extends NotificationListenerService 
         Call call = okHttpClient.newCall(request);
         call.enqueue(new Callback() {
 
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    String error = e.getMessage();
-                    //发送失败后监听日志
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "失败时-通知回调失败：" + error);
-                    }
-                    Log.d(TAG, "push: 请求失败");
-
+            @Override
+            public void onFailure(Call call, IOException e) {
+                String error = e.getMessage();
+                //发送失败后监听日志
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "失败时-通知回调失败：" + error);
                 }
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    Looper.prepare();
-                    try {
-                        String str = response.body().string();
-                        JSONObject result = new JSONObject(str);
-                        String msg = result.getString("msg");
-                        //String[] pay_type = new String[2];
-                        if (type == 1) {
-                            //发送监听日志
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "监听到微信支付收款" + price + "元" + "\t" + "通知回调状态：" + msg + "\n" + "通知回调信息：" + str);
-                            }
-                        } else {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "监听到支付宝收款" + price + "元" + "\t" + "通知回调状态：" + msg + "\n" + "通知回调信息：" + str);
-                            }
-                        }
-                        Toast.makeText(getApplicationContext() , "通知回调成功：" + str, Toast.LENGTH_LONG).show();
-                    } catch (JSONException e) {//创建JSONobject需抛JSON异常
-                        String error = e.getMessage();
-                        //发送失败监听日志
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "响应时-通知回调失败：" + error);
-                        }
-                        Toast.makeText(getApplicationContext() , "通知回调失败！ " + error , Toast.LENGTH_LONG).show();
-                        //如果通知回调失败则1秒后执行补回调
-                        new Handler().postDelayed(new Runnable(){
+                Log.d(TAG, "push: 请求失败");
 
-                                @Override
-                                public void run() {
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Looper.prepare();
+                try {
+                    String str = response.body().string();
+                    JSONObject result = new JSONObject(str);
+                    String msg = result.getString("msg");
+                    //String[] pay_type = new String[2];
+                    if (type == 1) {
+                        //发送监听日志
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "监听到微信支付收款" + price + "元" + "\t" + "通知回调状态：" + msg + "\n" + "通知回调信息：" + str);
+                        }
+                    } else {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "监听到支付宝收款" + price + "元" + "\t" + "通知回调状态：" + msg + "\n" + "通知回调信息：" + str);
+                        }
+                    }
+                    //Toast.makeText(getApplicationContext(), "通知回调成功：" + str, Toast.LENGTH_LONG).show();
+                } catch (JSONException e) {//创建JSONobject需抛JSON异常
+                    String error = e.getMessage();
+                    //发送失败监听日志
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "通知回调失败：" + error);
+                    }
+                    //Toast.makeText(getApplicationContext(), "通知回调失败！ " + error, Toast.LENGTH_LONG).show();
+                    //如果通知回调失败则1秒后执行补回调
+                    new Handler().postDelayed(new Runnable() {
+
+                        @Override
+                        public void run() {
                                     /*
                                      //Thread state = new Thread(new Runnable(){
 
                                      /* @Override
                                      public void run(){*/
-                                    try {
-                                        String t = String.valueOf(new Date().getTime());
-                                        String sign = md5(type + "" + price + t + key);
-                                        String url = "http://" + host + "/appPush?t=" + t + "&type=" + type + "&price=" + price + "&sign=" + sign;
-                                        String data = getHtml(url);//请求
-                                        //创建JSON解析对象
-                                        JSONObject jsonObject = new JSONObject(data);
-                                        //获取状态码
-                                        int code = jsonObject.getInt("code");
-                                        //获取msg所有内容
-                                        String Message=jsonObject.getString("msg");
-                                        if (code == 1 && Message.equals("成功")) {
-                                            if (type == 1) {
-                                                //发送监听日志
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                                    sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "自动补回调：" + "监听到微信支付收款" + price + "元" + "\t" + "通知回调状态：" + Message + "\n" + "通知回调信息：" + data);
-                                                }
-                                            } else {
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                                    sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "自动补回调：" + "监听到支付宝收款" + price + "元" + "\t" + "通知回调状态：" + Message + "\n" + "通知回调信息：" + data);
-                                                }
-                                            }
-                                            Toast.makeText(getApplicationContext() , "补通知回调成功：" + data, Toast.LENGTH_LONG).show();
+                            try {
+                                String t = String.valueOf(new Date().getTime());
+                                String sign = md5(type + "" + price + t + key);
+                                String url = "http://" + host + "/appPush?t=" + t + "&type=" + type + "&price=" + price + "&sign=" + sign;
+                                String data = getHtml(url);//请求
+                                //创建JSON解析对象
+                                JSONObject jsonObject = new JSONObject(data);
+                                //获取状态码
+                                int code = jsonObject.getInt("code");
+                                //获取msg所有内容
+                                String Message = jsonObject.getString("msg");
+                                if (code == 1 && Message.equals("成功")) {
+                                    if (type == 1) {
+                                        //发送监听日志
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                            sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "自动补回调：" + "监听到微信支付收款" + price + "元" + "\t" + "通知回调状态：" + Message + "\n" + "通知回调信息：" + data);
                                         }
-                                    } catch (Exception e) {
-                                        String error = e.getMessage();
-                                        Toast.makeText(getApplication(), "自动补单回调失败！联系作者反馈" + "\n错误详情：" + error, Toast.LENGTH_LONG).show();
+                                    } else {
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                            sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\r\r\r\r" + "自动补回调：" + "监听到支付宝收款" + price + "元" + "\t" + "通知回调状态：" + Message + "\n" + "通知回调信息：" + data);
+                                        }
                                     }
+                                    Toast.makeText(getApplicationContext(), "补通知回调成功：" + data, Toast.LENGTH_LONG).show();
+                                }
+                            } catch (Exception e) {
+                                String error = e.getMessage();
+                                Toast.makeText(getApplication(), "自动补单回调失败！联系作者反馈" + "\n错误详情：" + error, Toast.LENGTH_LONG).show();
+                            }
                                     /*}
                                      });state.start();*/
-                                }
-                            }, 1000);
-                    }
-                    Looper.loop();
+                        }
+                    }, 1000);
                 }
-            });
+                Looper.loop();
+            }
+        });
     }
 
 
@@ -382,25 +395,26 @@ public class PayNotificationListenerService extends NotificationListenerService 
         Request request = new Request.Builder().url(url).method("GET", null).build();
         Call call = okHttpClient.newCall(request);
         call.enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    Log.d(TAG, "onResponse  push: 请求失败");
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onResponse  push: 请求失败");
 
-                }
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
+            }
 
-                    Log.d(TAG, "onResponse  push: " + response.body().string());
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
 
-                }
-            });
+                Log.d(TAG, "onResponse  push: " + response.body().string());
+
+            }
+        });
     }
 
 
     public static String getMoney(String content) {
 
         List<String> ss = new ArrayList<String>();
-        for (String sss:content.replaceAll("[^0-9.]", ",").split(",")) {
+        for (String sss : content.replaceAll("[^0-9.]", ",").split(",")) {
             if (sss.length() > 0)
                 ss.add(sss);
         }
@@ -411,6 +425,7 @@ public class PayNotificationListenerService extends NotificationListenerService 
         }
 
     }
+
     public static String md5(String string) {
         if (TextUtils.isEmpty(string)) {
             return "";
@@ -441,7 +456,7 @@ public class PayNotificationListenerService extends NotificationListenerService 
          */
         SharedPreferences read = getSharedPreferences("items", MODE_PRIVATE);
         String logsStr = read.getString("logsStr", "");
-        String [] logsStrs = logsStr.split("\n");
+        String[] logsStrs = logsStr.split("\n");
         if (logsStrs.length > 20) {
             logsStr = logsStr.substring(0, logsStr.lastIndexOf("\n"));
             logsStr = logsStr.substring(0, logsStr.lastIndexOf("\n"));
@@ -466,7 +481,7 @@ public class PayNotificationListenerService extends NotificationListenerService 
     //获取HTML
     public String getHtml(String path) throws Exception {
         URL url = new URL(path);
-        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setConnectTimeout(8 * 1000);
         //通过输入流获取html数据

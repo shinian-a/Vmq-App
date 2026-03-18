@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#FFF0F0F0">
+    //按下后，水波纹的颜色
+    <item>
+        <color android:color="#FFFFFF"/>
+        //控件默认的颜色
+    </item>
+</ripple>

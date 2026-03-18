@@ -1,54 +1,140 @@
-# 介绍
+# Vmq-App - 免 Root 收款监听助手
 
-该软件是基于V免签开发一款免root和框架Android收款监听软件，功能为监听支付宝和微信收款消息与服务端进行交互，若匹配当前时间段服务端有同金额订单将会把收到的金额消息进行回调！达到监听通知栏收款消息回调完成支付业务。该版本主要修复了原版监控的支付宝和微信不回调的BUG，优化代码写法。删除沉余代码加快启动速度，增加电池白名单权限，使软件在电池优化时不会被杀掉！增加Log监听回调面板与店员监听
+## 📱 项目简介
+
+这是一款基于V 免签开发的 Android 收款监听应用，**无需 Root 权限和框架**即可实现支付宝和微信收款消息的自动监听与回调。
+
+### ✨ 核心功能
+
+- 🎯 **双平台监听**：支持支付宝和微信收款通知监听
+- 🔔 **智能回调**：匹配服务端订单金额后自动触发回调
+- 📊 **日志面板**：实时查看监听日志和回调记录
+- 👥 **店员管理**：支持店员监听功能
+- 🔋 **持久运行**：电池白名单保护，后台稳定运行
+- ⚡ **性能优化**：精简代码结构，启动速度提升
+
+### 🛠️ 版本改进
+
+相比原版的主要改进：
+- ✅ 修复支付宝和微信不回调的 BUG
+- ✅ 优化代码结构，提升执行效率
+- ✅ 删除冗余代码，加快启动速度
+- ✅ 增加电池白名单权限，防止被系统杀掉进程
 
 #### 有任何建议欢迎致信我，如果可能的话可增加功能，如果本项目对您有帮助请给我一个免费的Star⭐
 
-## 软件架构
+## 🏗️ 技术架构
 
-软件采用Java原生开发 java+xml编写
+- **开发语言**：Java + XML
+- **目标平台**：Android 5.0+ (API 21)
+- **编译 SDK**：Android 36
+- **构建工具**：Gradle 8.12.0
+- **开发环境**：Android Studio / AIDE
 
-## 监听截图
+## 📸 界面预览
 
 ### 微信收款监听
-![image](https://s1.ax1x.com/2022/12/19/zqu0rF.jpg)
-[![zqubGt.jpg](https://s1.ax1x.com/2022/12/19/zqubGt.jpg)](https://imgse.com/i/zqubGt)
+![微信收款监听](https://s1.ax1x.com/2022/12/19/zqu0rF.jpg)
 
 ### 支付宝收款监听
-[![zqKYee.jpg](https://s1.ax1x.com/2022/12/19/zqKYee.jpg)](https://imgse.com/i/zqKYee)
+![支付宝收款监听](https://s1.ax1x.com/2022/12/19/zqKYee.jpg)
 
-### 心跳
-![image](https://s1.ax1x.com/2022/12/19/zquTIA.jpg)
+### 心跳检测
+![心跳检测](https://s1.ax1x.com/2022/12/19/zquTIA.jpg)
 
-### 支付成功
-[![zquXM8.jpg](https://s1.ax1x.com/2022/12/19/zquXM8.jpg)](https://imgse.com/i/zquXM8)
-![image](https://s1.ax1x.com/2022/12/19/zquLxf.jpg)
+### 支付成功通知
+![支付成功 1](https://s1.ax1x.com/2022/12/19/zquXM8.jpg)
+![支付成功 2](https://s1.ax1x.com/2022/12/19/zquLxf.jpg)
 
 
-## 安装教程
-下载位于：[Releases](https://github.com/shinian-a/Vmq-App/releases) 下载apk进行安装配置权限和数据安装微信支付宝即可
+## 📥 安装使用
 
-### 构建
-Android：将项目源码导入存储卡/sdcard/AppProjects 目录下 使用AIDE构建
+### 方式一：直接安装（推荐）
 
-## 其他下载镜像
+从 [Releases](https://github.com/shinian-a/Vmq-App/releases) 下载最新 APK 安装包，完成以下操作：
 
-1.[蓝奏云镜像](https://shinianacn.lanzouy.com/b027kqata) 密码:vmq
+1. 安装 APK 到 Android 设备
+2. 授予必要的权限（通知读取、自启动等）
+3. 配置服务端信息
+4. 保持应用在前台或后台运行
 
-2.[Gitee镜像](https://gitee.com/shinian-a/Vmq-App/releases)
+### 方式二：源码构建
 
-2.安装至android系统的手机打开进行权限配置和数据配置检测更新即可！
+#### Android Studio 构建
+```bash
+# 克隆项目到本地
+git clone https://github.com/shinian-a/Vmq-App.git
 
-## 使用说明
-微信关注公众号“微信支付““微信收款助手”！设置打开微信支付宝通知权限
-强烈推荐：开启电池白名单权限，给予软件自启动和后台运行 详情请百度各手机的方法
-软件需保持前台运行或者后台运行亦或者息屏后台(前提条件：开启自启动和后台运行与电池白名单权限)
-android软件更新迭代较快，保持更新是唯一不会使业务受到影响的最好方式 更新请使用上面链接查看首个最新版本！
-注意：屏幕分辨率适配2400×1080 在部分Android分辨率过低可能显示异常，后门会做适配，部分云手机监听权限异常请反馈，一切问题期待3.0大升级
+# 使用 Android Studio 打开项目
+# 等待 Gradle 同步完成
+# 点击 Build → Build Bundle(s) / APK(s) → Build APK(s)
+```
 
-### 联系我
-您可以通过邮箱致信我：shiniana@qq.com
+#### AIDE构建
+将项目源码导入 `/sdcard/AppProjects` 目录，使用AIDE 进行构建编译。
+
+## 💾 下载镜像
+
+| 镜像源 | 链接 | 备注 |
+|--------|------|------|
+| GitHub Releases | [下载地址](https://github.com/shinian-a/Vmq-App/releases) | 官方最新版 |
+| 蓝奏云 | [下载地址](https://shinianacn.lanzouy.com/b027kqata) | 密码：vmq |
+| Gitee | [下载地址](https://gitee.com/shinian-a/Vmq-App/releases) | 国内镜像 |
+
+## ⚙️ 使用说明
+
+### 必要配置
+
+1. **微信配置**
+   - 关注公众号"微信支付"和"微信收款助手"
+   - 开启微信收款通知权限
+
+2. **支付宝配置**
+   - 开启支付宝收款通知权限
+
+3. **系统权限**（强烈推荐）
+   - ✅ 开启**电池白名单**权限
+   - ✅ 允许**自启动**和**后台运行**
+   - ✅ 授予**通知读取**权限
+   - 📱 具体方法请百度您手机品牌的设置教程
+
+### 运行模式
+
+应用支持以下运行方式（需满足上述权限）：
+- 📱 前台运行
+- 🔄 后台运行
+- 🌙 息屏后台运行
+
+### 注意事项
+
+- **分辨率适配**：推荐分辨率 2400×1080，部分低分辨率设备可能显示异常（后续版本会优化）
+- **云手机兼容性**：如遇到监听权限异常，请及时反馈
+- **更新建议**：Android 生态更新频繁，请保持使用最新版本以确保业务稳定
+
+### 故障排查
+
+如遇问题，请按以下步骤检查：
+1. 确认已授予所有必要权限
+2. 检查电池白名单是否开启
+3. 确认应用处于运行状态（前台/后台）
+4. 查看日志面板确认回调状态
+5. 升级到最新版本
+
+## 📬 联系与支持
+
+### 联系方式
+- 📧 邮箱：[shiniana@qq.com](mailto:shiniana@qq.com)
+- 💡 如有任何建议或遇到问题，欢迎致信交流
 
 ### 致谢
+本项目基于 [V 免签](https://github.com/szvone/Vmq) 开发，感谢原作者的贡献。
 
-[V免签](https://github.com/szvone/Vmq)
+---
+
+<div align="center">
+
+**如果这个项目对您有帮助，请给一个免费的 Star⭐！**
+
+[![Star History Chart](https://api.star-history.com/svg?repos=shinian-a/Vmq-App&type=Date)](https://star-history.com/#shinian-a/Vmq-App&Date)
+
+</div>

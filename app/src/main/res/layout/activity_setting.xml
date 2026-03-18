@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="#FFFFFFFF">
+
+	<ScrollView
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="#FFFFFFFF">
+
+		<LinearLayout
+			android:orientation="vertical"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="#FFFFFFFF">
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="版本"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:layout_margin="16dp"
+				android:textColor="#FF03A9F5"/>
+
+			<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:gravity="center_vertical"
+				android:background="@drawable/ripple"
+				android:id="@+id/appupdate"
+				android:onClick="ver_sion"
+				android:paddingStart="16dp"
+				android:paddingEnd="16dp">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="检测更新"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="#FF000000"/>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="当前软件版本"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:id="@+id/version"
+					android:layout_marginTop="4dp"/>
+
+			</LinearLayout>
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="反馈"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:layout_margin="16dp"
+				android:textColor="#FF03A9F5"/>
+
+			<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:gravity="center_vertical"
+				android:background="@drawable/ripple"
+				android:id="@+id/bugfeed"
+				android:onClick="email_fk"
+				android:paddingStart="16dp"
+				android:paddingEnd="16dp">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="意见反馈"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="#FF000000"/>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="意见反馈或Bug提交"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:layout_marginTop="4dp"/>
+
+			</LinearLayout>
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="帮助"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:layout_margin="16dp"
+				android:textColor="#FF03A9F5"/>
+
+			<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:gravity="center_vertical"
+				android:id="@+id/softhelp"
+				android:background="@drawable/ripple"
+				android:onClick="help_api"
+				android:paddingStart="16dp"
+				android:paddingEnd="16dp">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="配置文档"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="#FF000000"/>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="软件基本使用教程"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:layout_marginTop="4dp"/>
+
+			</LinearLayout>
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="服务"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:layout_margin="16dp"
+				android:textColor="#FFFF0000"/>
+
+			<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:gravity="center_vertical"
+				android:id="@+id/setservice1"
+				android:background="@drawable/ripple"
+				android:onClick="dc_qx"
+				android:paddingStart="16dp"
+				android:paddingEnd="16dp">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="开启电池白名单"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="#FF000000"/>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="检测应用是否加入白名单优化"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:layout_marginTop="4dp"/>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:gravity="center_vertical"
+				android:id="@+id/setservice"
+				android:background="@drawable/ripple"
+				android:onClick="service_start"
+				android:paddingStart="16dp"
+				android:paddingEnd="16dp">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="后台/息屏保活"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="#FF000000"/>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="提高应用的存活率避免被杀"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:layout_marginTop="4dp"/>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:gravity="center_vertical"
+				android:id="@+id/state_pm"
+				android:background="@drawable/ripple"
+				android:paddingStart="16dp"
+				android:paddingEnd="16dp">
+
+				<LinearLayout
+					android:orientation="vertical"
+					android:layout_width="0dp"
+					android:layout_height="match_parent"
+					android:gravity="center_vertical"
+					android:layout_weight="1">
+
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="开启/关闭屏幕常亮模式"
+						android:textAppearance="?android:attr/textAppearanceSmall"
+						android:textColor="#FF000000"/>
+
+					<TextView
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:text="此功能可实现永不息屏掉单率接近0%"
+						android:textAppearance="?android:attr/textAppearanceSmall"
+						android:layout_marginTop="4dp"/>
+
+				</LinearLayout>
+
+				<Switch
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:id="@+id/state_switch"
+					android:onClick="state_swit"/>
+
+			</LinearLayout>
+
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="其他"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:layout_margin="16dp"
+				android:textColor="#FF03A9F5"/>
+
+			<LinearLayout
+				android:orientation="vertical"
+				android:layout_width="match_parent"
+				android:layout_height="60dp"
+				android:gravity="center_vertical"
+				android:id="@+id/softabout"
+				android:background="@drawable/ripple"
+				android:onClick="vmq_Pro_gy"
+				android:paddingStart="16dp"
+				android:paddingEnd="16dp">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="#FF000000"
+					android:text="关于"/>
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:text="开发人员及相关信息"
+					android:layout_marginTop="4dp"/>
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+	</ScrollView>
+
+</LinearLayout>

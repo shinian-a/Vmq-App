@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="#FFFFFFFF">
+
+	<EditText
+		android:layout_width="match_parent"
+		android:ems="10"
+		android:layout_height="120dp"
+		android:layout_margin="10dp"
+		android:gravity="left"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:id="@+id/feedbacktext"
+		android:hint="您遇到的问题或建议..."/>
+
+	<EditText
+		android:layout_width="match_parent"
+		android:ems="10"
+		android:layout_height="41dp"
+		android:layout_margin="10dp"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:id="@+id/contact"
+		android:hint="请输入您的联系方式（QQ/邮箱/手机号）"
+		android:inputType="textEmailSubject"
+		android:gravity="left"/>
+
+	<Button
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="立即提交"
+		android:layout_margin="10dp"
+		android:id="@+id/submit"
+		android:onClick="email_go"/>
+
+</LinearLayout>
+

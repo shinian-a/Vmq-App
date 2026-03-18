@@ -1,9 +1,44 @@
+# ========== IDE 配置文件 ==========
+.idea/
 *.iml
-.gradle
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries
+*.ipr
+*.iws
+.vscode/
+
+# ========== 编译输出 ==========
+/build/
+*/build/
+out/
+target/
+
+# ========== Gradle 缓存 ==========
+.gradle/
+*/.gradle/
+
+# ========== 本地配置（含密钥）==========
+local.properties
+keystore.properties
+*.jks
+*.keystore
+!debug.keystore
+
+# ========== 系统临时文件 ==========
 .DS_Store
-/build
-/captures
-.externalNativeBuild
+Thumbs.db
+desktop.ini
+
+# ========== 日志和临时文件 ==========
+*.log
+*.tmp
+*.swp
+*~
+
+# ========== APK 发布包 ==========
+*.apk
+*.aab
+*.ap_
+
+# ========== 测试报告 ==========
+/test-results/
+*/test-results/
+reports/
