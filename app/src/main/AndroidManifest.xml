@@ -185,58 +185,6 @@
             android:syncable="true" />
 
 
-
-        <receiver android:name=".receiver.KeepAliveReceiver"
-            android:exported="true">
-
-            <intent-filter>
-
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-
-            </intent-filter>
-
-            <intent-filter>
-
-                <action android:name="android.intent.action.PACKAGE_ADDED"/>
-
-                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
-
-                <data android:scheme="package"/>
-
-            </intent-filter>
-
-            <intent-filter>
-
-                <action android:name="android.intent.action.ACTION_USER_PRESENT"/>
-
-            </intent-filter>
-
-            <intent-filter>
-
-                <action android:name="android.intent.action.MEDIA_MOUNTED"/>
-
-                <action android:name="android.intent.action.MEDIA_UNMOUNTED"/>
-
-                <data android:scheme="file">
-
-                </data>
-
-            </intent-filter>
-
-            <intent-filter>
-
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
-
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>
-
-                <action android:name="android.net.wifi.STATE_CHANGE"/>
-
-            </intent-filter>
-
-        </receiver>
-
     </application>
 
 </manifest>
