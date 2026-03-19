@@ -59,29 +59,6 @@ jobs:
           gradle-version: '8.13'
           cache-disabled: false
 
-        # 解码签名文件（如果配置了 Secrets）
-      - name: Decode Keystore
-        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: |
-          echo "🔐 检测到签名配置，开始解码..."
-          echo "$KEYSTORE_BASE64" | base64 --decode > keystore.jks
-          
-          if [ -f "keystore.jks" ]; then
-            echo "✅ 签名文件解码成功"
-            ls -lh keystore.jks
-            echo "✅ 验证签名环境变量:"
-            echo "  - KEYSTORE_PASSWORD: ${KEYSTORE_PASSWORD:+已设置}"
-            echo "  - KEY_ALIAS: ${KEY_ALIAS:+已设置}"
-            echo "  - KEY_PASSWORD: ${KEY_PASSWORD:+已设置}"
-          else
-            echo "❌ 签名文件解码失败"
-            exit 1
-          fi
 
         # 根据触发方式确定构建类型，设置后续步骤的执行条件
         # 输出变量：debug, release, is_manual, should_release
