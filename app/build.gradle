@@ -22,36 +22,29 @@ android {
             }
         }
 
-    // 签名配置
+    // ========== 签名配置 ==========
     signingConfigs {
         release {
-            // 从环境变量读取签名信息（GitHub Actions 提供）
-            def keystoreFile = file("../keystore.jks")
-            if (keystoreFile.exists()) {
-                storeFile = keystoreFile
-                def storePasswordVal = System.getenv('KEYSTORE_PASSWORD')
-                def keyAliasVal = System.getenv('KEY_ALIAS')
-                def keyPasswordVal = System.getenv('KEY_PASSWORD')
-
-                // 严格验证：必要参数不能为空
-                if (!storePasswordVal || !keyAliasVal) {
-//                    throw new GradleException("签名配置失败：缺少必要的环境变量 KEYSTORE_PASSWORD 或 KEY_ALIAS")
-                }
-                
-                storePassword = storePasswordVal
-                keyAlias = keyAliasVal
-                keyPassword = keyPasswordVal ?: storePasswordVal
-            } else {
-                throw new GradleException("签名配置失败：keystore.jks 文件不存在")
-            }
+            // 从 gradle.properties 读取（本地构建）
+            // 从 GitHub Secrets 读取（CI 构建）
+            storeFile file(System.getenv("KEYSTORE_FILE") ?: "../keystore/vmq-release.jks")
+            storePassword System.getenv("KEYSTORE_PASSWORD") ?: project.hasProperty("KEYSTORE_PASSWORD") ? project.property("KEYSTORE_PASSWORD") : ""
+            keyAlias System.getenv("KEY_ALIAS") ?: (project.hasProperty("KEY_ALIAS") ? project.property("KEY_ALIAS") : "")
+            keyPassword System.getenv("KEY_PASSWORD") ?: (project.hasProperty("KEY_PASSWORD") ? project.property("KEY_PASSWORD") : "")
         }
     }
 
     buildTypes {
-        release {
-            minifyEnabled false  // 临时禁用混淆，方便调试
+        debug {
+            minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release  // 使用签名配置
         }
     }
 
