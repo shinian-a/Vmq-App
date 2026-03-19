@@ -25,7 +25,14 @@ android {
     // 签名配置
     signingConfigs {
         release {
-            // 正式发布版本不签名（后续手动签名或使用其他工具签名）
+            // 从环境变量读取签名信息（GitHub Actions 提供）
+            def keystoreFile = file("../keystore.jks")
+            if (keystoreFile.exists()) {
+                storeFile = keystoreFile
+                storePassword System.getenv('KEYSTORE_PASSWORD') ?: ''
+                keyAlias System.getenv('KEY_ALIAS') ?: 'vmq-release-key'
+                keyPassword System.getenv('KEY_PASSWORD') ?: ''
+            }
         }
     }
 
