@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 同步适配器配置 -->
+<sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accountType="com.shinian.pay.account"
+    android:contentAuthority="com.shinian.pay.provider"
+    android:supportsUploading="true"
+    android:allowParallelSyncs="true"
+    android:isAlwaysSyncable="true"
+    android:userVisible="false" />
