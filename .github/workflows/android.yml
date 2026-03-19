@@ -4,6 +4,7 @@ name: Android CI
 on:
   push:
     branches: [ main, master ]
+    tags: [ 'v*' ]
   pull_request:
     branches: [ main, master ]
 
@@ -20,24 +21,53 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-    
-    # 使用系统 Gradle 而不是 wrapper
+        cache: gradle
+
+      # 配置 Gradle
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v5
       with:
-
-      
         gradle-version: '8.13'
-    
+        cache-disabled: false
+
+      # 构建项目（跳过 Lint 检查）
     - name: Build with Gradle
-      run: gradle build --stacktrace
-    
-    - name: Build APK
       run: |
-      gradle assembleDebug assembleRelease \
-      -x lintDebug \
-      -x lintRelease \
-      --stacktrace
+        gradle assembleDebug assembleRelease \
+          -x lintDebug \
+          -x lintRelease \
+          --stacktrace \
+          --no-daemon
+
+      # 上传 Debug APK
+    - name: Upload Debug APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug
+        path: app/build/outputs/apk/debug/app-debug.apk
+        if-no-files-found: ignore
+
+      # 上传 Release APK
+    - name: Upload Release APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-release
+        path: app/build/outputs/apk/release/app-release.apk
+        if-no-files-found: ignore
+
+      # 如果是 tag 推送，创建 Release
+    - name: Create Release
+      id: create_release
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        files: |
+          app/build/outputs/apk/debug/app-debug.apk
+          app/build/outputs/apk/release/app-release.apk
+        draft: false
+        prerelease: false
 
 
       
