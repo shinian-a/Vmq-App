@@ -6,9 +6,7 @@
 .vscode/
 
 # 签名文件（重要！）
-*.jks
-*.keystore
-*.keystore.*
+
 
 # ========== 编译输出 ==========
 /build/
