@@ -120,9 +120,9 @@ jobs:
         
         if [ $BUILD_RESULT -eq 0 ]; then
           echo "✅ Release APK 构建成功（未签名）"
-          # 验证文件是否存在
-          if [ -f "app/build/outputs/apk/release/app-release.apk" ]; then
-            echo "📦 APK 文件已生成：$(ls -lh app/build/outputs/apk/release/app-release.apk)"
+          # 验证文件是否存在（未签名的 APK 文件名是 app-release-unsigned.apk）
+          if [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
+            echo "📦 APK 文件已生成：$(ls -lh app/build/outputs/apk/release/app-release-unsigned.apk)"
             echo "⚠️  注意：此 APK 未签名，需要手动签名后才能安装或发布"
           else
             echo "❌ APK 文件未找到！"
@@ -153,7 +153,7 @@ jobs:
       if: steps.build_type.outputs.release == 'true'
       with:
         name: app-release-${{ github.sha }}-${{ github.run_id }}
-        path: app/build/outputs/apk/release/app-release.apk
+        path: app/build/outputs/apk/release/app-release-unsigned.apk
         if-no-files-found: error
         retention-days: 30
 
@@ -166,7 +166,7 @@ jobs:
       with:
         files: |
           ${{ steps.build_type.outputs.debug == 'true' && 'app/build/outputs/apk/debug/app-debug.apk' || '' }}
-          ${{ steps.build_type.outputs.release == 'true' && 'app/build/outputs/apk/release/app-release.apk' || '' }}
+          ${{ steps.build_type.outputs.release == 'true' && 'app/build/outputs/apk/release/app-release-unsigned.apk' || '' }}
         draft: false
         prerelease: ${{ !startsWith(github.ref, 'refs/tags/v') }}
         generate_release_notes: true
