@@ -1,6 +1,7 @@
 package com.shinian.pay.service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
@@ -23,6 +24,9 @@ import com.shinian.pay.R;
  */
 
 public class CancelNoticeService extends Service {
+    private static final String CHANNEL_ID = "cancel_notice_channel";
+    private static final String CHANNEL_NAME = "取消通知服务";
+    
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -37,18 +41,18 @@ public class CancelNoticeService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN_MR2){
-            Notification.Builder builder = new Notification.Builder(this);
-            builder.setSmallIcon(R.drawable.ic_launcher);
-            startForeground(DaemonService.NOTICE_ID,builder.build());
-            // 开启一条线程，去移除DaemonService弹出的通知
+            createNotificationChannel();
+            Notification.Builder builder = createNotificationBuilder();
+            startForeground(DaemonService.NOTICE_ID, builder.build());
+            // 开启一条线程，去移除 DaemonService 弹出的通知
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    // 延迟1s
+                    // 延迟 1s
                     SystemClock.sleep(1000);
-                    // 取消CancelNoticeService的前台
+                    // 取消 CancelNoticeService 的前台
                     stopForeground(true);
-                    // 移除DaemonService弹出的通知
+                    // 移除 DaemonService 弹出的通知
                     NotificationManager manager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
                     manager.cancel(DaemonService.NOTICE_ID);
                     // 任务完成，终止自己
@@ -57,6 +61,42 @@ public class CancelNoticeService extends Service {
             }).start();
         }
         return super.onStartCommand(intent, flags, startId);
+    }
+        
+    /**
+     * 创建通知渠道 (Android 8.0+)
+     */
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_MIN // 使用最低重要性，完全隐藏通知
+            );
+            channel.setDescription("用于临时移除前台通知");
+            channel.enableLights(false);
+            channel.enableVibration(false);
+            channel.setShowBadge(false);
+                
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
+        }
+    }
+        
+    /**
+     * 创建通知构建器 (兼容不同版本)
+     */
+    private Notification.Builder createNotificationBuilder() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return new Notification.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setPriority(Notification.PRIORITY_MIN);
+        } else {
+            return new Notification.Builder(this)
+                    .setSmallIcon(R.drawable.ic_launcher);
+        }
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.shinian.pay;
+package com.shinian.pay.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import java.io.File;

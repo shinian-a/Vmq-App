@@ -39,6 +39,14 @@
     <!-- BIND_NOTIFICATION_LISTENER_SERVICE -->
     <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"/>
 
+    <!-- Account Sync 所需权限 -->
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+
+    <!-- JobScheduler 所需权限 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <!--相机对焦-->
     <uses-feature android:name="android.hardware.camera.autofocus"/>
 
@@ -49,7 +57,6 @@
         android:smallScreens="true"/>
 
     <application
-        android:name=".PayApplication"
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -57,7 +64,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity"
+        <activity android:name=".ui.MainActivity"
             android:exported="true">
 
             <intent-filter>
@@ -72,24 +79,18 @@
 
 
         <activity
-            android:name=".HelpActivity"
+            android:name=".ui.HelpActivity"
             android:label="@string/HelpActivity"/>
 
-        <activity
-            android:name=".WxPayActivity"
-            android:label="@string/WxPayActivity"/>
 
         <activity
-            android:name=".SettingActivity"
+            android:name=".ui.SettingActivity"
             android:label="@string/SettingActivity"
             android:launchMode="singleTask"/>
 
-        <activity
-            android:name=".FeedActivity"
-            android:label="@string/FeedActivity"/>
 
         <activity
-            android:name=".SinglePixelActivity"
+            android:name=".ui.SinglePixelActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
             android:excludeFromRecents="true"
             android:finishOnTaskLaunch="false"
@@ -98,8 +99,24 @@
 
         <activity android:name="com.google.zxing.activity.CaptureActivity"/>
 
+        <!-- FileProvider 用于分享 APK 文件 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <activity
+            android:name=".ui.AboutActivity"
+            android:label="关于软件"
+            android:launchMode="singleTask"/>
+
         <service
-            android:name=".PayNotificationListenerService"
+            android:name=".service.PayNotificationListenerService"
             android:label="@string/qx"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
             android:exported="true">
@@ -113,7 +130,7 @@
         </service>
 
         <service
-            android:name=".ForeService"
+            android:name=".service.ForeService"
             android:enabled="true"
             android:exported="true"/>
 
@@ -138,6 +155,49 @@
         <service
             android:name=".service.AliveJobService"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
+
+        <!-- Native 守护服务 -->
+        <service
+            android:name=".service.NativeDaemonService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":native_daemon"/>
+
+        <!-- Account 认证服务 -->
+        <service
+            android:name=".service.AccountAuthService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <!-- 同步适配器服务 -->
+        <service
+            android:name=".service.SyncAdapterService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":sync_adapter">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/syncadapter" />
+        </service>
+
+        <!-- 虚拟 ContentProvider (用于 SyncAdapter) -->
+        <provider
+            android:name=".provider.SyncProvider"
+            android:authorities="com.shinian.pay.provider"
+            android:exported="false"
+            android:syncable="true" />
+
+
 
         <receiver android:name=".receiver.KeepAliveReceiver"
             android:exported="true">

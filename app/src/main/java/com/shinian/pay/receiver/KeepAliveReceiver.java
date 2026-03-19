@@ -10,7 +10,7 @@ import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.shinian.pay.SettingActivity;
+import com.shinian.pay.ui.SettingActivity;
 import com.shinian.pay.manager.AppConstants;
 import com.shinian.pay.util.SystemUtils;
 

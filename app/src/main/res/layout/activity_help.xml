@@ -1,9 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
-	
+
+	<!-- 标题栏 -->
+	<LinearLayout
+		android:orientation="horizontal"
+		android:layout_width="match_parent"
+		android:layout_height="56dp"
+		android:background="#FF03A9F5"
+		android:gravity="center_vertical"
+		android:paddingStart="8dp"
+		android:paddingEnd="16dp">
+
+		<!-- 返回按钮 -->
+		<ImageView
+			android:id="@+id/btn_back"
+			android:layout_width="40dp"
+			android:layout_height="40dp"
+			android:src="@drawable/btn_back"
+			android:scaleType="fitCenter"
+			android:padding="8dp"
+			android:background="?android:attr/selectableItemBackgroundBorderless"
+			android:contentDescription="返回"/>
+
+		<!-- 标题 -->
+		<TextView
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:text="帮助文档"
+			android:textColor="#FFFFFFFF"
+			android:textSize="20sp"
+			android:textStyle="bold"
+			android:layout_marginStart="8dp"/>
+
+	</LinearLayout>
+
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+
 	
 	
 	<LinearLayout
@@ -13,14 +53,15 @@
 		android:orientation="vertical"
 		android:gravity="center">
 
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/help_title"
-			android:textSize="25sp"
-			android:textColor="#FFFF0000"
-			android:layout_marginBottom="30dp"/>
 
+
+		<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/help_title"
+				android:textSize="25sp"
+				android:textColor="#FFFF0000"
+				android:layout_marginBottom="30dp"/>
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -45,7 +86,7 @@
 		<ImageView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:src="@drawable/help_pzsm3"
+			android:src="@drawable/help_pzsm1"
 			android:adjustViewBounds="true"
 			android:maxHeight="600px"
 			android:maxWidth="1200px"
@@ -59,7 +100,7 @@
 		<ImageView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:src="@drawable/help_pzsm3"
+			android:src="@drawable/help_pzsm2"
 			android:adjustViewBounds="true"
 			android:maxHeight="1500px"
 			android:maxWidth="1500px"
@@ -101,7 +142,7 @@
 		<ImageView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:src="@drawable/help_pzsm3"
+			android:src="@drawable/help_pzsm5"
 			android:adjustViewBounds="true"
 			android:maxHeight="1000px"
 			android:maxWidth="2000px"
@@ -137,4 +178,6 @@
 	</LinearLayout>
 
 </ScrollView>
+
+</LinearLayout>
 

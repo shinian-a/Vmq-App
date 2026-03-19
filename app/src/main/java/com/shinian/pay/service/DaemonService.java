@@ -1,6 +1,7 @@
 package com.shinian.pay.service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
@@ -26,6 +27,8 @@ import com.shinian.pay.manager.AppConstants;
 public class DaemonService extends Service {
     private static final String TAG = "DaemonService";
     public static final int NOTICE_ID = 100;
+    private static final String CHANNEL_ID = "daemon_service_channel";
+    private static final String CHANNEL_NAME = "守护服务通知";
 
     @Nullable
     @Override
@@ -38,19 +41,57 @@ public class DaemonService extends Service {
         super.onCreate();
         if(AppConstants.DEBUG)
             Log.d(TAG,"DaemonService---->onCreate 被调用，启动前台 service");
-        //如果API大于18，需要弹出一个可见通知
+        //如果 API 大于 18，需要弹出一个可见通知
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
-            Notification.Builder builder = new Notification.Builder(this);
-            builder.setSmallIcon(R.drawable.ic_launcher);
-            builder.setContentTitle("KeepAppAlive");
-            builder.setContentText("DaemonService is runing...");
-            startForeground(NOTICE_ID,builder.build());
+            createNotificationChannel();
+            Notification.Builder builder = createNotificationBuilder();
+            startForeground(NOTICE_ID, builder.build());
             // 如果觉得常驻通知栏体验不好
-            // 可以通过启动CancelNoticeService，将通知移除，oom_adj值不变
+            // 可以通过启动 CancelNoticeService，将通知移除，oom_adj 值不变
             Intent intent = new Intent(this,CancelNoticeService.class);
             startService(intent);
         }else{
             startForeground(NOTICE_ID,new Notification());
+        }
+    }
+        
+    /**
+     * 创建通知渠道 (Android 8.0+)
+     */
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_LOW // 使用低重要性，减少打扰
+            );
+            channel.setDescription("用于保持应用后台运行");
+            channel.enableLights(false);
+            channel.enableVibration(false);
+            channel.setShowBadge(false);
+                
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
+        }
+    }
+        
+    /**
+     * 创建通知构建器 (兼容不同版本)
+     */
+    private Notification.Builder createNotificationBuilder() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return new Notification.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setContentTitle("KeepAppAlive")
+                    .setContentText("DaemonService is runing...")
+                    .setPriority(Notification.PRIORITY_LOW);
+        } else {
+            return new Notification.Builder(this)
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setContentTitle("KeepAppAlive")
+                    .setContentText("DaemonService is runing...");
         }
     }
 

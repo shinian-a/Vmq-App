@@ -10,7 +10,7 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.shinian.pay.SettingActivity;
+import com.shinian.pay.ui.SettingActivity;
 import com.shinian.pay.manager.AppConstants;
 import com.shinian.pay.util.SystemUtils;
 
@@ -35,14 +35,12 @@ public class AliveJobService extends JobService {
         public boolean handleMessage(Message msg) {
             // 具体任务逻辑
             if(SystemUtils.isAPPALive(getApplicationContext(), AppConstants.PACKAGE_NAME)){
-                Toast.makeText(getApplicationContext(), "APP活着的", Toast.LENGTH_SHORT)
-                        .show();
+                Log.e(TAG,"APP活着的");
             }else{
                 Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                Toast.makeText(getApplicationContext(), "APP被杀死，重启...", Toast.LENGTH_SHORT)
-                        .show();
+                Log.e(TAG,"APP被杀死，重启...");
             }
             // 通知系统任务执行结束
             jobFinished( (JobParameters) msg.obj, false );
