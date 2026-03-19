@@ -136,7 +136,7 @@ public class PayNotificationListenerService extends NotificationListenerService 
     
     // 微信支付标题关键字
     private static final String[] WECHAT_PAY_TITLES = {
-        "微信支付", "微信收款助手", "微信收款商业版", "对外收款", "企业微信"
+        "微信支付", "微信收款助手", "微信收款商业版", "对外收款", "企业微信","Weixin Cashier Assistant"
     };
     
     // 金额提取正则表达式（预编译提升性能）

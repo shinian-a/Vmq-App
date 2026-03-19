@@ -46,7 +46,7 @@
 ### 方式二：源码构建
 
 #### IntelliJ IDEA 构建
-```bash
+```code
 # 克隆项目到本地
 git clone https://github.com/shinian-a/Vmq-App.git
 
