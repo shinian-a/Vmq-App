@@ -5,7 +5,7 @@ name: Android CI
 
 # 触发条件配置
 on:
-  # 代码推送触发
+  # 代码推送触发（每次 push 自动构建）
   push:
     branches: [ main, master ]
     tags: [ 'v*' ]
