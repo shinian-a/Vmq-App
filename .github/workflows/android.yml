@@ -32,7 +32,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-      # 设置 JDK 和 Gradle
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
@@ -46,13 +45,23 @@ jobs:
         gradle-version: '8.13'
         cache-disabled: false
 
-      # 根据输入决定构建类型
     - name: Determine build type
       id: build_type
       run: |
+        BUILD_TYPE="${{ github.event.inputs.build_type }}"
         if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-          echo "debug=${{ github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == 'both' }}" >> $GITHUB_OUTPUT
-          echo "release=${{ github.event.inputs.build_type == 'release' || github.event.inputs.build_type == 'both' }}" >> $GITHUB_OUTPUT
+          if [[ "$BUILD_TYPE" == "debug" || "$BUILD_TYPE" == "both" ]]; then
+            echo "debug=true" >> $GITHUB_OUTPUT
+          else
+            echo "debug=false" >> $GITHUB_OUTPUT
+          fi
+        
+          if [[ "$BUILD_TYPE" == "release" || "$BUILD_TYPE" == "both" ]]; then
+            echo "release=true" >> $GITHUB_OUTPUT
+          else
+            echo "release=false" >> $GITHUB_OUTPUT
+          fi
+        
           echo "is_manual=true" >> $GITHUB_OUTPUT
           echo "should_release=${{ github.event.inputs.create_release }}" >> $GITHUB_OUTPUT
         else
@@ -62,45 +71,58 @@ jobs:
           echo "should_release=false" >> $GITHUB_OUTPUT
         fi
 
-      # 构建 Debug APK
     - name: Build Debug APK
       if: steps.build_type.outputs.debug == 'true'
+      timeout-minutes: 30
       run: |
+        echo "开始构建 Debug APK..."
         gradle assembleDebug \
           -x lintDebug \
           --stacktrace \
           --no-daemon
+        
+        if [ $? -eq 0 ]; then
+          echo "✓ Debug APK 构建成功"
+        else
+          echo "✗ Debug APK 构建失败"
+          exit 1
+        fi
 
-      # 构建 Release APK
     - name: Build Release APK
       if: steps.build_type.outputs.release == 'true'
+      timeout-minutes: 30
       run: |
+        echo "开始构建 Release APK..."
         gradle assembleRelease \
           -x lintRelease \
           --stacktrace \
           --no-daemon
+        
+        if [ $? -eq 0 ]; then
+          echo "✓ Release APK 构建成功"
+        else
+          echo "✗ Release APK 构建失败"
+          exit 1
+        fi
 
-      # 上传 Debug APK
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
       if: steps.build_type.outputs.debug == 'true'
       with:
-        name: app-debug-${{ github.sha }}
+        name: app-debug-${{ github.sha }}-${{ github.run_id }}
         path: app/build/outputs/apk/debug/app-debug.apk
-        if-no-files-found: ignore
+        if-no-files-found: error
         retention-days: 30
 
-      # 上传 Release APK
     - name: Upload Release APK
       uses: actions/upload-artifact@v4
       if: steps.build_type.outputs.release == 'true'
       with:
-        name: app-release-${{ github.sha }}
+        name: app-release-${{ github.sha }}-${{ github.run_id }}
         path: app/build/outputs/apk/release/app-release.apk
-        if-no-files-found: ignore
+        if-no-files-found: error
         retention-days: 30
 
-      # 如果是 tag 推送或手动触发且要求创建 Release
     - name: Create Release
       id: create_release
       if: startsWith(github.ref, 'refs/tags/v') || (steps.build_type.outputs.is_manual == 'true' && steps.build_type.outputs.should_release == 'true')
@@ -114,7 +136,4 @@ jobs:
         draft: false
         prerelease: ${{ !startsWith(github.ref, 'refs/tags/v') }}
         generate_release_notes: true
-
-
-      
-    
+        fail_on_unmatched_files: true
