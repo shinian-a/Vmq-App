@@ -64,6 +64,9 @@ jobs:
       if: ${{ secrets.KEYSTORE_BASE64 != '' }}
       env:
         KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
       run: |
         echo "🔐 检测到签名配置，开始解码..."
         echo "$KEYSTORE_BASE64" | base64 --decode > keystore.jks
@@ -71,6 +74,10 @@ jobs:
         if [ -f "keystore.jks" ]; then
           echo "✅ 签名文件解码成功"
           ls -lh keystore.jks
+          echo "✅ 验证签名环境变量:"
+          echo "  - KEYSTORE_PASSWORD: ${KEYSTORE_PASSWORD:+已设置}"
+          echo "  - KEY_ALIAS: ${KEY_ALIAS:+已设置}"
+          echo "  - KEY_PASSWORD: ${KEY_PASSWORD:+已设置}"
         else
           echo "❌ 签名文件解码失败"
           exit 1
@@ -151,10 +158,24 @@ jobs:
         echo "Java 版本：$JAVA_HOME"
         
         # 检查签名文件是否存在
+        echo "📋 检查签名配置:"
         if [ -f "keystore.jks" ]; then
-          echo "✅ 签名文件已加载，将生成已签名的 APK"
+          echo "✅ 签名文件已存在：keystore.jks"
+          ls -lh keystore.jks
         else
-          echo "⚠️  未找到签名文件，将生成未签名的 APK"
+          echo "❌ 签名文件不存在"
+          exit 1
+        fi
+        
+        # 验证环境变量
+        echo "🔐 验证环境变量:"
+        echo "  - KEYSTORE_PASSWORD: ${KEYSTORE_PASSWORD:+已设置}"
+        echo "  - KEY_ALIAS: ${KEY_ALIAS:+已设置}"
+        echo "  - KEY_PASSWORD: ${KEY_PASSWORD:+已设置}"
+        
+        if [ -z "$KEYSTORE_PASSWORD" ] || [ -z "$KEY_ALIAS" ]; then
+          echo "❌ 错误：签名环境变量未正确设置"
+          exit 1
         fi
         
         gradle assembleRelease \
@@ -170,9 +191,20 @@ jobs:
           # 验证文件是否存在（已签名时文件名为 app-release.apk，未签名时为 app-release-unsigned.apk）
           if [ -f "app/build/outputs/apk/release/app-release.apk" ]; then
             echo "📦 APK 文件已生成（已签名）：$(ls -lh app/build/outputs/apk/release/app-release.apk)"
+            # 验证签名
+            if unzip -l app/build/outputs/apk/release/app-release.apk | grep -q "META-INF"; then
+              echo "✅ APK 已签名验证通过"
+            else
+              echo "⚠️  APK 可能未签名"
+            fi
           elif [ -f "app/build/outputs/apk/release/app-release-unsigned.apk" ]; then
             echo "📦 APK 文件已生成（未签名）：$(ls -lh app/build/outputs/apk/release/app-release-unsigned.apk)"
-            echo "⚠️  注意：此 APK 未签名，需要手动签名后才能安装或发布"
+            echo "❌ 错误：APK 未签名，说明签名配置失败"
+            echo "请检查:"
+            echo "  1. keystore.jks 文件是否正确解码"
+            echo "  2. GitHub Secrets 是否正确配置"
+            echo "  3. build.gradle 中的签名配置是否正确"
+            exit 1
           else
             echo "❌ APK 文件未找到！"
             echo "查找所有生成的 APK 文件："
