@@ -245,41 +245,67 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
      */
     private void exitApp() {
         try {
-            // 1. 停止前台服务（监听服务）
-            stopService(new Intent(MainActivity.this, ForeService.class));
-            Log.d(TAG, "已停止前台监听服务");
-
-            // 2. 停止电量线程（如果存在）
+            // 1. 停止心跳线程（如果存在）
             if (dlThread != null) {
                 dlThread.interrupt();
                 dlThread = null;
                 Log.d(TAG, "已停止电量线程");
             }
 
-            // 3. 清除所有通知（可选）
-            NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            if (nm != null) {
-                nm.cancelAll();
-                Log.d(TAG, "已清除所有通知");
+            // 2. 停止前台服务（监听服务）
+            try {
+                stopService(new Intent(MainActivity.this, ForeService.class));
+                Log.d(TAG, "已停止前台监听服务");
+            } catch (Exception e) {
+                Log.e(TAG, "停止前台服务失败", e);
             }
 
-            // 4. 显示退出提示
+            // 3. 重启通知监听服务（禁用再启用以清理状态）
+            try {
+                toggleNotificationListenerService(this);
+                Log.d(TAG, "已重启通知监听服务");
+            } catch (Exception e) {
+                Log.e(TAG, "重启通知监听服务失败", e);
+            }
+
+            // 4. 清除所有通知
+            try {
+                NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                if (nm != null) {
+                    nm.cancelAll();
+                    Log.d(TAG, "已清除所有通知");
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "清除通知失败", e);
+            }
+
+            // 5. 显示退出提示
             Toast.makeText(this, "正在退出监控服务...", Toast.LENGTH_SHORT).show();
 
-            // 5. 延迟退出，确保服务已停止
+            // 6. 延迟退出，确保所有服务已停止
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    // 6. 终止进程
-                    android.os.Process.killProcess(android.os.Process.myPid());
-                    System.exit(0);
+                    try {
+                        // 7. 终止进程
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                        System.exit(0);
+                    } catch (Exception e) {
+                        Log.e(TAG, "终止进程失败", e);
+                        // 强制终止
+                        Runtime.getRuntime().exit(0);
+                    }
                 }
-            }, 500); // 延迟 500 毫秒，确保服务完全停止
+            }, 800); // 延迟 800 毫秒，确保服务完全停止
 
         } catch (Exception e) {
             Log.e(TAG, "退出应用时发生错误", e);
             // 如果清理过程失败，直接退出
-            android.os.Process.killProcess(android.os.Process.myPid());
+            try {
+                android.os.Process.killProcess(android.os.Process.myPid());
+            } catch (Exception ex) {
+                Runtime.getRuntime().exit(0);
+            }
         }
     }
 
@@ -1421,6 +1447,9 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
             id = 0; // 重置 ID 计数器
         }
         notificationManager.notify(notificationId, notification);
+        
+        // 注意：不要在这里直接发送日志，等待 NotificationListenerService 回调处理
+        // 避免日志重复显示
     }
 
     /**
