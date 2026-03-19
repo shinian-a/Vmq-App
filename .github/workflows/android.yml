@@ -257,11 +257,11 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      # 创建 GitHub Release 发布版本（仅在 tag 推送或手动触发时执行）
+      # 创建 GitHub Release 发布版本（仅在 tag 推送时执行）
       # 自动附加构建产物并生成发布说明
       - name: Create Release
         id: create_release
-        if: startsWith(github.ref, 'refs/tags/v') || (steps.build_type.outputs.is_manual == 'true' && steps.build_type.outputs.should_release == 'true')
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -271,6 +271,6 @@ jobs:
             ${{ steps.build_type.outputs.release == 'true' && env.RELEASE_APK_PATH || '' }}
             ${{ steps.build_type.outputs.release == 'true' && env.UNSIGNED_APK_PATH || '' }}
           draft: false
-          prerelease: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+          prerelease: false
           generate_release_notes: true
           fail_on_unmatched_files: true
