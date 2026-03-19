@@ -31,21 +31,6 @@
 - **构建工具**：Gradle 8.12.0
 - **开发环境**：Android Studio / AIDE
 
-## 📸 界面预览
-
-### 微信收款监听
-![微信收款监听](https://s1.ax1x.com/2022/12/19/zqu0rF.jpg)
-
-### 支付宝收款监听
-![支付宝收款监听](https://s1.ax1x.com/2022/12/19/zqKYee.jpg)
-
-### 心跳检测
-![心跳检测](https://s1.ax1x.com/2022/12/19/zquTIA.jpg)
-
-### 支付成功通知
-![支付成功 1](https://s1.ax1x.com/2022/12/19/zquXM8.jpg)
-![支付成功 2](https://s1.ax1x.com/2022/12/19/zquLxf.jpg)
-
 
 ## 📥 安装使用
 
@@ -60,17 +45,17 @@
 
 ### 方式二：源码构建
 
-#### Android Studio 构建
+#### IntelliJ IDEA 构建
 ```bash
 # 克隆项目到本地
 git clone https://github.com/shinian-a/Vmq-App.git
 
-# 使用 Android Studio 打开项目
+# 使用 IntelliJ IDEA 打开项目(请提前安装Android插件)
 # 等待 Gradle 同步完成
 # 点击 Build → Build Bundle(s) / APK(s) → Build APK(s)
 ```
 
-#### AIDE构建
+#### AIDE构建（可能无效）
 将项目源码导入 `/sdcard/AppProjects` 目录，使用AIDE 进行构建编译。
 
 ## 💾 下载镜像
@@ -127,7 +112,7 @@ git clone https://github.com/shinian-a/Vmq-App.git
 - 💡 如有任何建议或遇到问题，欢迎致信交流
 
 ### 致谢
-本项目基于 [V 免签](https://github.com/szvone/Vmq) 开发，感谢原作者的贡献。
+本项目基于 [V免签](https://github.com/szvone/Vmq) 开发，感谢原作者的贡献。
 
 ---
 
