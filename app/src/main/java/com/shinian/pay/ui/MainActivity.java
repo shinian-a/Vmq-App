@@ -551,7 +551,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
         return false;
     }
 
-    @NotNull
+    @NonNull
     static HttpURLConnection getHttpURLConnection(String urlPath) throws IOException {
         URL url = new URL(urlPath);
         HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
