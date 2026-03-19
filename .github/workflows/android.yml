@@ -25,10 +25,20 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v5
       with:
+
+      
         gradle-version: '8.13'
     
     - name: Build with Gradle
       run: gradle build --stacktrace
     
     - name: Build APK
-      run: gradle assembleDebug --stacktrace
+      run: |
+      gradle assembleDebug assembleRelease \
+      -x lintDebug \
+      -x lintRelease \
+      --stacktrace
+
+
+      
+    
