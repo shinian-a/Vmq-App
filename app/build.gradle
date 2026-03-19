@@ -25,8 +25,7 @@ android {
     // 签名配置
     signingConfigs {
         release {
-            // 临时使用 debug 签名进行测试（正式发布时需要配置正式的 keystore）
-            // 注意：debug 签名仅用于测试，不能用于发布到应用商店
+            // 正式发布版本不签名（后续手动签名或使用其他工具签名）
         }
     }
 
@@ -35,7 +34,6 @@ android {
             minifyEnabled false  // 临时禁用混淆，方便调试
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release  // 应用签名配置
         }
     }
 
