@@ -1,26 +1,50 @@
-name: Android CI
+name: Android CI Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
+  # 允许手动触发
+  workflow_dispatch:
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # 使用最新的 Ubuntu 环境
 
     steps:
-    - uses: actions/checkout@v4
-    - name: set up JDK 11
+    # 1. 检出代码
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 2. 设置 Java 环境
+    # 注意：根据你的项目需求调整 java-version (如 11, 17)
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
-        distribution: 'temurin'
-        cache: gradle
+        java-version: '17'
+        distribution: 'temurin' # 推荐使用 Temurin 发行版
+        cache: 'gradle' # 开启 Gradle 缓存，加速构建
 
+    # 3. 赋予 Gradle 执行权限
+    # 这一步至关重要，防止 "Permission denied" 错误
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+
+    # 4. 构建项目
+    # 如果是 Flet 项目，这里可能是 'flet build apk'
+    # 如果是原生 Android，通常是 './gradlew assembleRelease'
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew assembleRelease --stacktrace
+
+    # 5. 上传构建产物
+    # 构建成功后，将 APK 文件上传到 GitHub Actions 的 Artifacts 以便下载
+    - name: Upload APK Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-release-apk
+        path: |
+          # 根据你的实际输出路径调整，通常在 app/build/outputs/apk/...
+          app/build/outputs/apk/release/*.apk
+          build/apk/*.apk 
+        retention-days: 7 # 保留 7 天
