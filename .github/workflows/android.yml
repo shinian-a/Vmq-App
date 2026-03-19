@@ -46,11 +46,11 @@ jobs:
         cache-disabled: false
 
     - name: Decode Keystore
-      if: env.KEYSTORE_BASE64 != ''
+      if: ${{ secrets.KEYSTORE_BASE64 != '' }}
       env:
         KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
       run: |
-        echo "🔐 解码签名文件..."
+        echo "🔐 检测到签名配置，开始解码..."
         # 将 Base64 编码的 keystore 解码为文件
         echo "$KEYSTORE_BASE64" | base64 --decode > keystore.jks
         
