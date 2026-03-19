@@ -29,10 +29,20 @@ android {
             def keystoreFile = file("../keystore.jks")
             if (keystoreFile.exists()) {
                 storeFile = keystoreFile
-                storePassword System.getenv('KEYSTORE_PASSWORD')
-                keyAlias System.getenv('KEY_ALIAS')
-                keyPassword System.getenv('KEY_PASSWORD')
+                def storePasswordVal = System.getenv('KEYSTORE_PASSWORD')
+                def keyAliasVal = System.getenv('KEY_ALIAS')
+                def keyPasswordVal = System.getenv('KEY_PASSWORD')
 
+                // 严格验证：必要参数不能为空
+                if (!storePasswordVal || !keyAliasVal) {
+//                    throw new GradleException("签名配置失败：缺少必要的环境变量 KEYSTORE_PASSWORD 或 KEY_ALIAS")
+                }
+                
+                storePassword = storePasswordVal
+                keyAlias = keyAliasVal
+                keyPassword = keyPasswordVal ?: storePasswordVal
+            } else {
+                throw new GradleException("签名配置失败：keystore.jks 文件不存在")
             }
         }
     }
