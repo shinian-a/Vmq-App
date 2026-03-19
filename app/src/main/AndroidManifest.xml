@@ -163,19 +163,6 @@
             android:exported="true"
             android:process=":native_daemon"/>
 
-        <!-- Account 认证服务 -->
-        <service
-            android:name=".service.AccountAuthService"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator" />
-            </intent-filter>
-            <meta-data
-                android:name="android.accounts.AccountAuthenticator"
-                android:resource="@xml/authenticator" />
-        </service>
-
         <!-- 同步适配器服务 -->
         <service
             android:name=".service.SyncAdapterService"
