@@ -7,6 +7,22 @@ on:
     tags: [ 'v*' ]
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: '构建类型'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - both
+          - debug
+          - release
+      create_release:
+        description: '创建 GitHub Release'
+        required: false
+        default: 'false'
+        type: boolean
 
 jobs:
   build:
@@ -15,7 +31,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      
+
+      # 设置 JDK 和 Gradle
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
@@ -23,18 +40,42 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
-      # 配置 Gradle
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v5
       with:
         gradle-version: '8.13'
         cache-disabled: false
 
-      # 构建项目（跳过 Lint 检查）
-    - name: Build with Gradle
+      # 根据输入决定构建类型
+    - name: Determine build type
+      id: build_type
       run: |
-        gradle assembleDebug assembleRelease \
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "debug=${{ github.event.inputs.build_type == 'debug' || github.event.inputs.build_type == 'both' }}" >> $GITHUB_OUTPUT
+          echo "release=${{ github.event.inputs.build_type == 'release' || github.event.inputs.build_type == 'both' }}" >> $GITHUB_OUTPUT
+          echo "is_manual=true" >> $GITHUB_OUTPUT
+          echo "should_release=${{ github.event.inputs.create_release }}" >> $GITHUB_OUTPUT
+        else
+          echo "debug=true" >> $GITHUB_OUTPUT
+          echo "release=true" >> $GITHUB_OUTPUT
+          echo "is_manual=false" >> $GITHUB_OUTPUT
+          echo "should_release=false" >> $GITHUB_OUTPUT
+        fi
+
+      # 构建 Debug APK
+    - name: Build Debug APK
+      if: steps.build_type.outputs.debug == 'true'
+      run: |
+        gradle assembleDebug \
           -x lintDebug \
+          --stacktrace \
+          --no-daemon
+
+      # 构建 Release APK
+    - name: Build Release APK
+      if: steps.build_type.outputs.release == 'true'
+      run: |
+        gradle assembleRelease \
           -x lintRelease \
           --stacktrace \
           --no-daemon
@@ -42,32 +83,37 @@ jobs:
       # 上传 Debug APK
     - name: Upload Debug APK
       uses: actions/upload-artifact@v4
+      if: steps.build_type.outputs.debug == 'true'
       with:
-        name: app-debug
+        name: app-debug-${{ github.sha }}
         path: app/build/outputs/apk/debug/app-debug.apk
         if-no-files-found: ignore
+        retention-days: 30
 
       # 上传 Release APK
     - name: Upload Release APK
       uses: actions/upload-artifact@v4
+      if: steps.build_type.outputs.release == 'true'
       with:
-        name: app-release
+        name: app-release-${{ github.sha }}
         path: app/build/outputs/apk/release/app-release.apk
         if-no-files-found: ignore
+        retention-days: 30
 
-      # 如果是 tag 推送，创建 Release
+      # 如果是 tag 推送或手动触发且要求创建 Release
     - name: Create Release
       id: create_release
-      if: startsWith(github.ref, 'refs/tags/v')
-      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/v') || (steps.build_type.outputs.is_manual == 'true' && steps.build_type.outputs.should_release == 'true')
+      uses: softprops/action-gh-release@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         files: |
-          app/build/outputs/apk/debug/app-debug.apk
-          app/build/outputs/apk/release/app-release.apk
+          ${{ steps.build_type.outputs.debug == 'true' && 'app/build/outputs/apk/debug/app-debug.apk' || '' }}
+          ${{ steps.build_type.outputs.release == 'true' && 'app/build/outputs/apk/release/app-release.apk' || '' }}
         draft: false
-        prerelease: false
+        prerelease: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+        generate_release_notes: true
 
 
       
