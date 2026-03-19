@@ -126,6 +126,7 @@ jobs:
         if: steps.build_type.outputs.release == 'true'
         timeout-minutes: 30
         env:
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE || 'app/keystore/keystore.jks' }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
@@ -136,11 +137,12 @@ jobs:
           
           # 检查签名文件是否存在
           echo "📋 检查签名配置:"
-          if [ -f "keystore.jks" ]; then
-            echo "✅ 签名文件已存在：keystore.jks"
-            ls -lh keystore.jks
+          echo "  - KEYSTORE_FILE: ${KEYSTORE_FILE:-app/keystore/keystore.jks}"
+          if [ -f "${KEYSTORE_FILE:-app/keystore/keystore.jks}" ]; then
+            echo "✅ 签名文件已存在：${KEYSTORE_FILE:-app/keystore/keystore.jks}"
+            ls -lh "${KEYSTORE_FILE:-app/keystore/keystore.jks}"
           else
-            echo "❌ 签名文件不存在"
+            echo "❌ 签名文件不存在：${KEYSTORE_FILE:-app/keystore/keystore.jks}"
             exit 1
           fi
           
