@@ -25,7 +25,7 @@ android {
     // 签名配置
     signingConfigs {
         release {
-            storeFile file(System.getenv("KEYSTORE_FILE") ?: "keystore/keystore.jks")
+            storeFile file(System.getenv("KEYSTORE_FILE") ?: rootProject.file("app/keystore/keystore.jks"))
             storePassword System.getenv("KEYSTORE_PASSWORD") ?: project.hasProperty("KEYSTORE_PASSWORD") ? project.property("KEYSTORE_PASSWORD") : ""
             keyAlias System.getenv("KEY_ALIAS") ?: (project.hasProperty("KEY_ALIAS") ? project.property("KEY_ALIAS") : "")
             keyPassword System.getenv("KEY_PASSWORD") ?: (project.hasProperty("KEY_PASSWORD") ? project.property("KEY_PASSWORD") : "")
