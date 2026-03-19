@@ -1,11 +1,8 @@
 package com.shinian.pay.ui;
-import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
 import android.view.View;
-import android.view.WindowManager;
-import androidx.appcompat.app.ActionBar;
-import java.util.function.BooleanSupplier;
-import android.service.controls.actions.BooleanAction; // 这个可以不用管
+import androidx.appcompat.app.AppCompatActivity;
 import com.shinian.pay.R;
 
 public class HelpActivity extends AppCompatActivity {
