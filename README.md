@@ -60,13 +60,17 @@ git clone https://github.com/shinian-a/Vmq-App.git
 #### AIDE构建（可能无效）
 将项目源码导入 `/sdcard/AppProjects` 目录，使用AIDE 进行构建编译。
 
+#### Activity(历史)
+
+你可以使用Activity查阅所有时间段源码构建详细过程并下载调试发布版本，默认情况下每次build都是已签名Apk
+
 ## 💾 下载镜像
 
-| 镜像源 | 链接 | 备注 |
-|--------|------|------|
-| GitHub Releases | [下载地址](https://github.com/shinian-a/Vmq-App/releases) | 官方最新版 |
-| 蓝奏云 | [下载地址](https://shinianacn.lanzouy.com/b027kqata) | 密码：vmq |
-| Gitee | [下载地址](https://gitee.com/shinian-a/Vmq-App/releases) | 国内镜像 |
+| 镜像源             | 链接                                                    | 备注         |
+|-----------------|-------------------------------------------------------|------------|
+| GitHub Releases | [下载地址](https://github.com/shinian-a/Vmq-App/releases) | 官方最新版      |
+| 蓝奏云             | [下载地址](https://shinianacn.lanzouy.com/b027kqata)      | 密码：vmq(停滞) |
+| Gitee           | [下载地址](https://gitee.com/shinian-a/Vmq-App/releases)  | 国内镜像(停滞)   |
 
 ## ⚙️ 使用说明
 
