@@ -4,6 +4,7 @@
 *.ipr
 *.iws
 .vscode/
+!lib/agents/gradle-instrumentation-agent-8.10.2.jar
 
 # ========== 编译输出 ==========
 /build/
