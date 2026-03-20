@@ -8,31 +8,31 @@ import android.icu.text.SimpleDateFormat;
 import android.os.*;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
-import androidx.core.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+import androidx.core.app.NotificationCompat;
+import com.shinian.pay.ui.MainActivity;
 import okhttp3.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.shinian.pay.ui.MainActivity;
-
 
 public class PayNotificationListenerService extends NotificationListenerService {
 
-    private static final String TAG = "NotificationListenerService";
+    private static final String TAG = "PayNotService";
     private String host = "";
     private String key = "";
     private Thread newThread = null;
@@ -455,18 +455,16 @@ public class PayNotificationListenerService extends NotificationListenerService 
      * 构建推送 URL（消除重复代码）
      */
     private String buildPushUrl(String host, int type, String priceStr, String t, String sign) {
-        return new StringBuilder()
-                .append("http://")
-                .append(host)
-                .append("/appPush?t=")
-                .append(t)
-                .append("&type=")
-                .append(type)
-                .append("&price=")
-                .append(priceStr)
-                .append("&sign=")
-                .append(sign)
-                .toString();
+        return "http://" +
+                host +
+                "/appPush?t=" +
+                t +
+                "&type=" +
+                type +
+                "&price=" +
+                priceStr +
+                "&sign=" +
+                sign;
     }
         
     /**
@@ -676,7 +674,7 @@ public class PayNotificationListenerService extends NotificationListenerService 
             //获取 html 的二进制数组
             byte[] data = readInputStream(inStream);
             //获取指定字符集解码指定的字节数组构造一个新的字符串
-            return new String(data, "UTF-8");
+            return new String(data, StandardCharsets.UTF_8);
         } finally {
             // 关闭输入流
             if (inStream != null) {
