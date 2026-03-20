@@ -41,6 +41,7 @@ import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
     private TextView txthost;
     private TextView txtkey;
     private boolean isOk = false;
-    private static String TAG = "MainActivity";
+    private static final String TAG = "MainActivity";
     private static String host;
     private static String key;
     public static TextView LogsTextView;
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
     private String state_swich;
     private TextView sj_dl;//当前电量Text
     private int capacity;
-    private int ld = 5;//亮度值0~255
+    private final int ld = 5;//亮度值0~255
     //当前版本
 
     private static final String ALIPAY_PERSON = "https://qr.alipay.com/fkx12542rpb5fljmhxlal35";
@@ -94,15 +95,15 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
 
 
         //查找组件
-        txthost = (TextView) findViewById(R.id.txt_host);
-        txtkey = (TextView) findViewById(R.id.txt_key);
-        LogsTextView = (TextView) findViewById(R.id.state_logs);
-        logs_linear_layout = (LinearLayout) findViewById(R.id.logs_linear_layout);
-        LogsTextView.setOnLongClickListener((OnLongClickListener) this);//长按
-        sj_dl = (TextView) findViewById(R.id.sj_dl);
+        txthost = findViewById(R.id.txt_host);
+        txtkey = findViewById(R.id.txt_key);
+        LogsTextView = findViewById(R.id.state_logs);
+        logs_linear_layout = findViewById(R.id.logs_linear_layout);
+        LogsTextView.setOnLongClickListener(this);//长按
+        sj_dl = findViewById(R.id.sj_dl);
 
         // 设置底部版权信息文本的下划线
-        TextView bqTextView = (TextView) findViewById(R.id.bq);
+        TextView bqTextView = findViewById(R.id.bq);
         if (bqTextView != null) {
             bqTextView.setPaintFlags(bqTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         }
@@ -227,6 +228,16 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
                 Log.d(TAG, "已重启通知监听服务");
             } catch (Exception e) {
                 Log.e(TAG, "重启通知监听服务失败", e);
+            }
+
+            // 4. 释放唤醒锁
+            try {
+                Class<?> serviceClass = Class.forName("com.shinian.pay.service.PayNotificationListenerService");
+                Method releaseMethod = serviceClass.getDeclaredMethod("releaseWakeLock");
+                releaseMethod.invoke(null);
+                Log.d(TAG, "已释放唤醒锁");
+            } catch (Exception e) {
+                Log.e(TAG, "释放唤醒锁失败", e);
             }
 
             // 4. 清除所有通知
@@ -474,7 +485,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
             if (HttpURLConnection.HTTP_OK == resultCode) {
                 StringBuilder sb = new StringBuilder();
                 String readLine;
-                responseReader = new BufferedReader(new InputStreamReader(httpConn.getInputStream(), "UTF-8"));
+                responseReader = new BufferedReader(new InputStreamReader(httpConn.getInputStream(), StandardCharsets.UTF_8));
                 while ((readLine = responseReader.readLine()) != null) {
                     sb.append(readLine).append("\n");
                 }
@@ -497,7 +508,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
                     uplog = data.optString("uplog", "");
                     upurl = data.optString("upurl", "");
 
-                    Log.i(TAG, "检查更新成功："+ data.toString() + version + "--" + Version);
+                    Log.i(TAG, "检查更新成功："+ data + version + "--" + Version);
                     // 验证必要字段
                     if (version > 0 && version > Version) {
                         AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
@@ -582,7 +593,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
         //获取html的二进制数组
         byte[] data = readInputStream(inStream);
         //获取指定字符集解码指定的字节数组构造一个新的字符串
-        String html = new String(data, "UTF-8");
+        String html = new String(data, StandardCharsets.UTF_8);
         return html;
     }
 
@@ -716,20 +727,6 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
                         .setNegativeButton("取消", null)
                         .create();
                 exit.show();
-				/*Toast.makeText(getApplicationContext(), "再按一次退出程序!", Toast.LENGTH_SHORT).show();
-                 new Thread(new Runnable() {
-                 @Override
-                 public void run() {
-                 try {
-                 Thread.sleep(3000);
-                 isExit = false;
-                 } catch (InterruptedException e) {
-                 e.printStackTrace();
-                 }
-                 }
-                 }).start();
-                 } else {*/
-                //android.os.Process.killProcess(android.os.Process.myPid());
             }
             return false;
         } else {
@@ -1322,7 +1319,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
 
     //检测心跳
     public void doStart(View view) {
-        if (isOk == false) {
+        if (!isOk) {
             Toast.makeText(MainActivity.this, "请您先配置!", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -1592,11 +1589,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
     //判断读写权限
     private boolean pdPermissions() {
         boolean qx = false;
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            qx = false;
-        } else {
-            qx = true;
-        }
+        qx = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         return qx;
     }
 
@@ -1654,10 +1647,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
      */
     public boolean isNLServiceEnabled() {
         Set<String> packageNames = NotificationManagerCompat.getEnabledListenerPackages(this);
-        if (packageNames.contains(getPackageName())) {
-            return true;
-        }
-        return false;
+        return packageNames.contains(getPackageName());
     }
 
 

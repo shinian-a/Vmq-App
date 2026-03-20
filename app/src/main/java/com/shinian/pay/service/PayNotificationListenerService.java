@@ -54,6 +54,7 @@ public class PayNotificationListenerService extends NotificationListenerService 
         if (newThread != null) {
             return;
         }
+        // 申请设备电源锁
         acquireWakeLock(this);
 
         // 初始化复用的 OkHttpClient
