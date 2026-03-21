@@ -2,7 +2,6 @@ package com.shinian.pay.ui;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -10,19 +9,18 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.*;
 import android.provider.Settings;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
 import com.shinian.pay.R;
+import com.shinian.pay.manager.AppConstants;
 import com.shinian.pay.receiver.ScreenReceiverUtil;
 import com.shinian.pay.service.DaemonService;
-import com.shinian.pay.service.PlayerMusicService;
 import com.shinian.pay.service.NativeDaemonService;
-import com.shinian.pay.manager.AppConstants;
-import com.shinian.pay.util.JobSchedulerManager;
+import com.shinian.pay.service.PlayerMusicService;
 import com.shinian.pay.util.ScreenManager;
 import org.json.JSONObject;
 
@@ -30,6 +28,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import static com.shinian.pay.ui.MainActivity.getHttpURLConnection;
 
@@ -206,90 +205,7 @@ public class SettingActivity extends AppCompatActivity {
         mScreenListenerer = null;
     }
 
-    /**
-     * 检查应用版本更新
-     * @return true 表示有新版本，false 表示已是最新版本或检查失败
-     */
-    public boolean App() {
-        HttpURLConnection httpConn = null;
-        DataOutputStream dos = null;
-        BufferedReader responseReader = null;
-
-        try {
-            // TODO: 建议升级为 HTTPS
-            String urlPath = "http://w.t3yanzheng.com/A729B02347E855EC";
-
-            // 当前软件版本号
-            String versionCode = getAppVersionCode();
-            if (versionCode == null || versionCode.isEmpty()) {
-                Log.e(TAG, "获取版本号失败");
-                return false;
-            }
-
-            Version = Integer.parseInt(versionCode);
-            String param = "ver=" + URLEncoder.encode(versionCode, "UTF-8");
-
-            // 建立连接
-            httpConn = getHttpURLConnection(urlPath);
-
-            // 建立输入流，向指向的 URL 传入参数
-            dos = new DataOutputStream(httpConn.getOutputStream());
-            dos.writeBytes(param);
-            dos.flush();
-
-            // 获得响应状态
-            int resultCode = httpConn.getResponseCode();
-            if (HttpURLConnection.HTTP_OK == resultCode) {
-                StringBuilder sb = new StringBuilder();
-                String readLine;
-                responseReader = new BufferedReader(new InputStreamReader(httpConn.getInputStream(), "UTF-8"));
-                while ((readLine = responseReader.readLine()) != null) {
-                    sb.append(readLine).append("\n");
-                }
-
-                JSONObject data = new JSONObject(sb.toString().trim());
-
-                // 验证必要字段是否存在
-                if (!data.has("code")) {
-                    Log.e(TAG, "检查更新失败：缺少 code 字段");
-                    return false;
-                }
-
-                code = data.getInt("code");
-
-                // 只有在 code==200 时才尝试获取其他字段
-                if (code == 200) {
-                    // 安全地获取可选字段，避免崩溃
-                    ver = data.optString("ver", "");
-                    versions = data.optInt("version", 0);
-                    uplog = data.optString("uplog", "");
-                    upurl = data.optString("upurl", "");
-
-                    // 验证必要字段
-                    if (versions > 0 && versions > Version) {
-                        showUpdateDialog(uplog, upurl);
-                        return true;
-                    }
-                } else {
-                    Log.w(TAG, "检查更新返回错误码：" + code);
-                }
-            } else {
-                Log.e(TAG, "检查更新请求失败，响应码：" + resultCode);
-            }
-        } catch (NumberFormatException e) {
-            Log.e(TAG, "版本号格式错误", e);
-        } catch (Exception e) {
-            Log.e(TAG, "检查更新发生异常", e);
-        } finally {
-            // 关闭资源
-            closeResource(dos, "DataOutputStream");
-            closeResource(responseReader, "BufferedReader");
-            if (httpConn != null) {
-                httpConn.disconnect();
-            }
-        }
-        return false;
-    }
+    private AlertDialog loadingDialog;
 
     /**
      * 显示更新对话框
@@ -353,15 +269,144 @@ public class SettingActivity extends AppCompatActivity {
         return "未知版本";
     }
 
+    /**
+     * 检查应用版本更新
+     * @return true 表示有新版本，false 表示已是最新版本或检查失败
+     */
+    public boolean App() {
+        HttpURLConnection httpConn = null;
+        DataOutputStream dos = null;
+        BufferedReader responseReader = null;
+
+        try {
+            // TODO: 建议升级为 HTTPS
+            String urlPath = "http://w.t3yanzheng.com/A729B02347E855EC";
+
+            // 当前软件版本号
+            String versionCode = getAppVersionCode();
+            if (versionCode == null || versionCode.isEmpty()) {
+                Log.e(TAG, "获取版本号失败");
+                return false;
+            }
+
+            Version = Integer.parseInt(versionCode);
+            String param = "ver=" + URLEncoder.encode(versionCode, "UTF-8");
+
+            // 建立连接
+            httpConn = getHttpURLConnection(urlPath);
+
+            // 建立输入流，向指向的 URL 传入参数
+            dos = new DataOutputStream(httpConn.getOutputStream());
+            dos.writeBytes(param);
+            dos.flush();
+
+            // 获得响应状态
+            int resultCode = httpConn.getResponseCode();
+            if (HttpURLConnection.HTTP_OK == resultCode) {
+                StringBuilder sb = new StringBuilder();
+                String readLine;
+                responseReader = new BufferedReader(new InputStreamReader(httpConn.getInputStream(), StandardCharsets.UTF_8));
+                while ((readLine = responseReader.readLine()) != null) {
+                    sb.append(readLine).append("\n");
+                }
+
+                JSONObject data = new JSONObject(sb.toString().trim());
+
+                // 验证必要字段是否存在
+                if (!data.has("code")) {
+                    Log.e(TAG, "检查更新失败：缺少 code 字段");
+                    return false;
+                }
+
+                code = data.getInt("code");
+
+                // 只有在 code==200 时才尝试获取其他字段
+                if (code == 200) {
+                    // 安全地获取可选字段，避免崩溃
+                    ver = data.optString("ver", "");
+                    versions = data.optInt("version", 0);
+                    uplog = data.optString("uplog", "");
+                    upurl = data.optString("upurl", "");
+
+                    // 验证必要字段
+                    if (versions > 0 && versions > Version) {
+                        final String finalUplog = uplog;
+                        final String finalUpurl = upurl;
+                        runOnUiThread(() -> showUpdateDialog(finalUplog, finalUpurl));
+                        return true;
+                    }
+                } else {
+                    Log.w(TAG, "检查更新返回错误码：" + code);
+                }
+            } else {
+                Log.e(TAG, "检查更新请求失败，响应码：" + resultCode);
+            }
+        } catch (NumberFormatException e) {
+            Log.e(TAG, "版本号格式错误", e);
+        } catch (Exception e) {
+            Log.e(TAG, "检查更新发生异常", e);
+        } finally {
+            // 关闭资源
+            closeResource(dos, "DataOutputStream");
+            closeResource(responseReader, "BufferedReader");
+            if (httpConn != null) {
+                httpConn.disconnect();
+            }
+        }
+        return false;
+    }
+
     // 检测更新
     public void ver_sion(View v) {
-        try {
-            if (!App()) {
-                Toast.makeText(this, "已经是最新版本", Toast.LENGTH_SHORT).show();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showLoadingDialog();
+                    }
+                });
+
+                try {
+                    final boolean result = App();
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dismissLoadingDialog();
+                            if (!result) {
+                                Toast.makeText(SettingActivity.this, "已经是最新版本", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } catch (final Exception e) {
+                    Log.e(TAG, "检查更新失败", e);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dismissLoadingDialog();
+                            Toast.makeText(SettingActivity.this, "检查更新失败", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
-        } catch (Exception e) {
-            Log.e(TAG, "检查更新失败", e);
-            Toast.makeText(this, "检查更新失败", Toast.LENGTH_SHORT).show();
+        }).start();
+    }
+
+    private void showLoadingDialog() {
+        if (loadingDialog == null || !loadingDialog.isShowing()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("正在检查更新...");
+            builder.setCancelable(false);
+            loadingDialog = builder.create();
+            loadingDialog.show();
+        }
+    }
+
+    private void dismissLoadingDialog() {
+        if (loadingDialog != null && loadingDialog.isShowing()) {
+            loadingDialog.dismiss();
         }
     }
 
@@ -381,7 +426,7 @@ public class SettingActivity extends AppCompatActivity {
         try {
             inStream = conn.getInputStream();
             byte[] data = readInputStream(inStream);
-            return new String(data, "UTF-8");
+            return new String(data, StandardCharsets.UTF_8);
         } finally {
             if (inStream != null) {
                 try {

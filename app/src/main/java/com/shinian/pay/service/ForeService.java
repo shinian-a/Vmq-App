@@ -1,12 +1,9 @@
 package com.shinian.pay.service;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.Service;
+import android.app.*;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ServiceInfo;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
@@ -59,9 +56,13 @@ public class ForeService extends Service {
         
         // 构建通知
         Notification notification = buildNotification();
-        
-        // 启动前台服务
-        startForeground(NOTIFICATION_ID, notification);
+
+        // 启动前台服务，指定前台服务类型
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+        } else {
+            startForeground(NOTIFICATION_ID, notification);
+        }
     }
     
     /**

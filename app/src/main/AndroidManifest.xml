@@ -33,20 +33,21 @@
     <!-- 运行前台服务 -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
-    <!-- 在后台运行 -->
-    <uses-permission android:name="android.permission.RUN_IN_BACKGROUND"/>
-
-    <!-- BIND_NOTIFICATION_LISTENER_SERVICE -->
-    <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"/>
+    <!-- 前台服务数据同步权限 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
 
     <!-- Account Sync 所需权限 -->
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.WRITE_SYNC_ADAPTER"/>
 
     <!-- JobScheduler 所需权限 -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
+    <!-- 声明相机硬件特性 -->
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
 
     <!--相机对焦-->
     <uses-feature android:name="android.hardware.camera.autofocus"/>
@@ -133,19 +134,22 @@
         <service
             android:name=".service.ForeService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true"
+            android:foregroundServiceType="dataSync"/>
 
         <service
             android:name=".service.DaemonService"
             android:enabled="true"
             android:exported="true"
-            android:process=":daemon_service"/>
+            android:process=":daemon_service"
+            android:foregroundServiceType="dataSync"/>
 
         <service
             android:name=".service.CancelNoticeService"
             android:enabled="true"
             android:exported="true"
-            android:process=":service"/>
+            android:process=":service"
+            android:foregroundServiceType="dataSync"/>
 
         <service
             android:name=".service.PlayerMusicService"
@@ -176,6 +180,30 @@
             <meta-data
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
+        </service>
+
+        <!-- 账户认证器 -->
+        <service
+                android:name=".service.AccountAuthenticatorService"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator"/>
+            </intent-filter>
+            <meta-data
+                    android:name="android.accounts.AccountAuthenticator"
+                    android:resource="@xml/authenticator"/>
+        </service>
+
+        <!-- 同步适配器服务 -->
+        <service
+                android:name="android.content.SyncAdapterType"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.content.SyncAdapter"/>
+            </intent-filter>
+            <meta-data
+                    android:name="android.content.SyncAdapter"
+                    android:resource="@xml/syncadapter"/>
         </service>
 
         <!-- 虚拟 ContentProvider (用于 SyncAdapter) -->

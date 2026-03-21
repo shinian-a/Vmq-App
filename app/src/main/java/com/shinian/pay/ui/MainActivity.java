@@ -457,109 +457,120 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
 
     /**
      * 检查应用版本更新
-     * @return true 表示有新版本，false 表示已是最新版本或检查失败
+     * 在子线程中执行网络请求，避免NetworkOnMainThreadException
      */
-    public boolean App() {
-        HttpURLConnection httpConn = null;
-        DataOutputStream dos = null;
-        BufferedReader responseReader = null;
-            
-        try {
-            //检查版本号是否最新接口
-            String urlPath = "http://w.t3yanzheng.com/A729B02347E855EC";
-    
-            //当前软件版本号
-            Version = Integer.parseInt(getAppVersionCode());
-            String param = "ver=" + URLEncoder.encode(getAppVersionCode(), "UTF-8");
-    
-            //建立连接
-            httpConn = getHttpURLConnection(urlPath);
-    
-            //建立输入流，向指向的 URL 传入参数
-            dos = new DataOutputStream(httpConn.getOutputStream());
-            dos.writeBytes(param);
-            dos.flush();
-    
-            //获得响应状态
-            int resultCode = httpConn.getResponseCode();
-            if (HttpURLConnection.HTTP_OK == resultCode) {
-                StringBuilder sb = new StringBuilder();
-                String readLine;
-                responseReader = new BufferedReader(new InputStreamReader(httpConn.getInputStream(), StandardCharsets.UTF_8));
-                while ((readLine = responseReader.readLine()) != null) {
-                    sb.append(readLine).append("\n");
-                }
-                    
-                JSONObject data = new JSONObject(sb.toString().trim());
-                    
-                // 验证必要字段是否存在
-                if (!data.has("code")) {
-                    Log.e(TAG, "检查更新失败：缺少 code 字段");
-                    return false;
-                }
-                    
-                code = data.getInt("code");
-                    
-                // 只有在 code==200 时才尝试获取其他字段
-                if (code == 200) {
-                    // 安全地获取可选字段，避免崩溃
-                    ver = data.optString("ver", "");
-                    version = data.optInt("version", 0);
-                    uplog = data.optString("uplog", "");
-                    upurl = data.optString("upurl", "");
+    public void App() {
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection httpConn = null;
+                DataOutputStream dos = null;
+                BufferedReader responseReader = null;
 
-                    Log.i(TAG, "检查更新成功："+ data + version + "--" + Version);
-                    // 验证必要字段
-                    if (version > 0 && version > Version) {
-                        AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("发现新版本！")
-                                .setMessage(uplog)
-                                .setIcon(R.drawable.app_gx)
-                                .setCancelable(false)
-                                .setPositiveButton("立即更新", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dia, int which) {
-                                        Intent intent_d = new Intent();
-                                        intent_d.setAction("android.intent.action.VIEW");
-                                        Uri content_url = Uri.parse(upurl);
-                                        intent_d.setData(content_url);
-                                        startActivity(intent_d);
+                try {
+                    //检查版本号是否最新接口
+                    String urlPath = "http://w.t3yanzheng.com/A729B02347E855EC";
+
+                    //当前软件版本号
+                    Version = Integer.parseInt(getAppVersionCode());
+                    String param = "ver=" + URLEncoder.encode(getAppVersionCode(), "UTF-8");
+
+                    //建立连接
+                    httpConn = getHttpURLConnection(urlPath);
+
+                    //建立输入流，向指向的 URL 传入参数
+                    dos = new DataOutputStream(httpConn.getOutputStream());
+                    dos.writeBytes(param);
+                    dos.flush();
+
+                    //获得响应状态
+                    int resultCode = httpConn.getResponseCode();
+                    if (HttpURLConnection.HTTP_OK == resultCode) {
+                        StringBuilder sb = new StringBuilder();
+                        String readLine;
+                        responseReader = new BufferedReader(new InputStreamReader(httpConn.getInputStream(), StandardCharsets.UTF_8));
+                        while ((readLine = responseReader.readLine()) != null) {
+                            sb.append(readLine).append("\n");
+                        }
+
+                        JSONObject data = new JSONObject(sb.toString().trim());
+
+                        // 验证必要字段是否存在
+                        if (!data.has("code")) {
+                            Log.e(TAG, "检查更新失败：缺少 code 字段");
+                            return;
+                        }
+
+                        final int code = data.getInt("code");
+
+                        // 只有在 code==200 时才尝试获取其他字段
+                        if (code == 200) {
+                            // 安全地获取可选字段，避免崩溃
+                            final String ver = data.optString("ver", "");
+                            final int version = data.optInt("version", 0);
+                            final String uplog = data.optString("uplog", "");
+                            final String upurl = data.optString("upurl", "");
+
+                            Log.i(TAG, "检查更新成功：" + data + version + "--" + Version);
+
+                            // 在主线程中显示UI
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // 验证必要字段
+                                    if (version > 0 && version > Version) {
+                                        AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                                                .setTitle("发现新版本！")
+                                                .setMessage(uplog)
+                                                .setIcon(R.drawable.app_gx)
+                                                .setCancelable(false)
+                                                .setPositiveButton("立即更新", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dia, int which) {
+                                                        Intent intent_d = new Intent();
+                                                        intent_d.setAction("android.intent.action.VIEW");
+                                                        Uri content_url = Uri.parse(upurl);
+                                                        intent_d.setData(content_url);
+                                                        startActivity(intent_d);
+                                                    }
+                                                })
+                                                .setNeutralButton("忽略更新", null)
+                                                .create();
+                                        dialog.show();
                                     }
-                                })
-                                .setNeutralButton("忽略更新", null)
-                                .create();
-                        dialog.show();
-                        return true;
+                                }
+                            });
+                        } else {
+                            Log.w(TAG, "检查更新返回错误码：" + code);
+                        }
+                    } else {
+                        Log.e(TAG, "检查更新请求失败，响应码：" + resultCode);
                     }
-                } else {
-                    Log.w(TAG, "检查更新返回错误码：" + code);
+                } catch (Exception e) {
+                    Log.e(TAG, "检查更新发生异常", e);
+                } finally {
+                    // 关闭资源
+                    if (dos != null) {
+                        try {
+                            dos.close();
+                        } catch (IOException e) {
+                            Log.e(TAG, "关闭 DataOutputStream 失败", e);
+                        }
+                    }
+                    if (responseReader != null) {
+                        try {
+                            responseReader.close();
+                        } catch (IOException e) {
+                            Log.e(TAG, "关闭 BufferedReader 失败", e);
+                        }
+                    }
+                    if (httpConn != null) {
+                        httpConn.disconnect();
+                    }
                 }
-            } else {
-                Log.e(TAG, "检查更新请求失败，响应码：" + resultCode);
             }
-        } catch (Exception e) {
-            Log.e(TAG, "检查更新发生异常", e);
-        } finally {
-            // 关闭资源
-            if (dos != null) {
-                try {
-                    dos.close();
-                } catch (IOException e) {
-                    Log.e(TAG, "关闭 DataOutputStream 失败", e);
-                }
-            }
-            if (responseReader != null) {
-                try {
-                    responseReader.close();
-                } catch (IOException e) {
-                    Log.e(TAG, "关闭 BufferedReader 失败", e);
-                }
-            }
-            if (httpConn != null) {
-                httpConn.disconnect();
-            }
-        }
-        return false;
+        });
+        thread.start();
     }
 
     @NonNull
@@ -1148,7 +1159,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
             Intent intent = new Intent();
             intent.setComponent(new ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI"));
             intent.putExtra("LauncherUI.From.Scaner.Shortcut", true);
-            intent.setFlags(335544320);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.setAction("android.intent.action.VIEW");
             context.startActivity(intent);
         } catch (Exception e) {
