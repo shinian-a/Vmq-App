@@ -40,7 +40,31 @@ public class PayNotificationListenerService extends NotificationListenerService 
     private OkHttpClient okHttpClient; // 复用 OkHttpClient 实例
     private Handler mainHandler; // 复用主线程 Handler
 
-    //释放设备电源锁
+    // MD5 加密
+    public static String md5(String string) {
+        if (TextUtils.isEmpty(string)) {
+            return "";
+        }
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+            byte[] bytes = md5.digest(string.getBytes());
+            String result = "";
+            for (byte b : bytes) {
+                String temp = Integer.toHexString(b & 0xff);
+                if (temp.length() == 1) {
+                    temp = "0" + temp;
+                }
+                result += temp;
+            }
+            return result;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    // 释放设备电源锁
     public void releaseWakeLock() {
         if (null != mWakeLock) {
             mWakeLock.release();
@@ -48,9 +72,11 @@ public class PayNotificationListenerService extends NotificationListenerService 
         }
     }
 
-    //心跳进程
+    // 心跳进程
     public void initAppHeart() {
         Log.d(TAG, "开始启动心跳线程");
+
+        // 防止重复启动
         if (newThread != null) {
             return;
         }
@@ -91,7 +117,7 @@ public class PayNotificationListenerService extends NotificationListenerService 
                                 if (MainActivity.LogsTextView != null && !MainActivity.LogsTextView.getText().toString().contains("心跳状态错误")) {
                                     //发送监听日志
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                        sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) 
+                                        sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
                                                 + "\r\r\r\r" + "心跳状态错误，请重新配置或切换网络环境!\n错误详情：" + error);
                                     }
                                     Toast.makeText(getApplicationContext(), "心跳状态错误，请重新配置或切换网络!", Toast.LENGTH_SHORT).show();
@@ -114,18 +140,6 @@ public class PayNotificationListenerService extends NotificationListenerService 
             }
         });
         newThread.start();
-    }
-
-    //申请设备电源锁
-    @SuppressLint("InvalidWakeLockTag")
-    public void acquireWakeLock(Context context) {
-        if (null == mWakeLock) {
-            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-            mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "WakeLock");
-            if (null != mWakeLock) {
-                mWakeLock.acquire();
-            }
-        }
     }
 
 
@@ -320,26 +334,16 @@ public class PayNotificationListenerService extends NotificationListenerService 
 
     }
 
-    @Override
-    public void onListenerConnected() {
-        // 初始化主线程 Handler（只初始化一次）
-        if (mainHandler == null) {
-            mainHandler = new Handler(Looper.getMainLooper());
-        }
-        
-        //开启心跳线程
-        initAppHeart();
-        
-        //延迟发送监听日志
-        mainHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) 
-                                   + "\r\r\r\r" + "监听服务开启成功！");
-                }
+    // 申请设备电源锁
+    @SuppressLint("InvalidWakeLockTag")
+    public void acquireWakeLock(Context context) {
+        if (null == mWakeLock) {
+            PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+            mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "WakeLock");
+            if (null != mWakeLock) {
+                mWakeLock.acquire();
             }
-        }, 1000);
+        }
     }
 
     /**
@@ -598,27 +602,26 @@ public class PayNotificationListenerService extends NotificationListenerService 
         return true;
     }
 
-    public static String md5(String string) {
-        if (TextUtils.isEmpty(string)) {
-            return "";
+    // 监听服务连接成功时回调初始化心跳线程
+    @Override
+    public void onListenerConnected() {
+        // 初始化主线程 Handler（只初始化一次）
+        if (mainHandler == null) {
+            mainHandler = new Handler(Looper.getMainLooper());
         }
-        MessageDigest md5 = null;
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-            byte[] bytes = md5.digest(string.getBytes());
-            String result = "";
-            for (byte b : bytes) {
-                String temp = Integer.toHexString(b & 0xff);
-                if (temp.length() == 1) {
-                    temp = "0" + temp;
+
+        // 初始化心跳线程
+        initAppHeart();
+        //延迟发送监听日志
+        mainHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
+                            + "\r\r\r\r" + "监听服务开启成功！");
                 }
-                result += temp;
             }
-            return result;
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return "";
+        }, 1000);
     }
 
     // 监听日志

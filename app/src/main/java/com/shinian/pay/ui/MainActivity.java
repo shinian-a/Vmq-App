@@ -1239,6 +1239,61 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
         startActivityForResult(intent, AppConstants.REQ_QR_CODE);
     }
 
+    /**
+     * 扫码结果处理
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //扫描结果回调
+        if (requestCode == AppConstants.REQ_QR_CODE && resultCode == RESULT_OK) {
+            Bundle bundle = data.getExtras();
+            String scanResult = bundle.getString(AppConstants.INTENT_EXTRA_KEY_QR_SCAN);
+
+            String[] tmp = scanResult.split("/");
+            if (tmp.length != 2) {
+                Toast.makeText(MainActivity.this, "二维码错误，请您扫描网站上显示的二维码!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String t = String.valueOf(new Date().getTime());
+            String sign = md5(t + tmp[1]);
+
+
+            OkHttpClient okHttpClient = new OkHttpClient();
+            Request request = new Request.Builder().url("http://" + tmp[0] + "/appHeart?t=" + t + "&sign=" + sign).method("GET", null).build();
+            Call call = okHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    Log.d(TAG, "onResponse: " + response.body().string());
+                    isOk = true;
+
+                }
+            });
+
+            //检查电池白名单权限
+            ignoreBatteryOptimization(this);
+            //将扫描出的信息显示出来
+            txthost.setText(" 通知地址：" + tmp[0]);
+            txtkey.setText(" 通讯密钥：" + tmp[1]);
+            host = tmp[0];
+            key = tmp[1];
+
+            SharedPreferences.Editor editor = getSharedPreferences("shinian", MODE_PRIVATE).edit();
+            editor.putString("host", host);
+            editor.putString("key", key);
+            editor.commit();
+
+
+        }
+    }
+
     //手动配置
     public void doInput(View v) {
         final EditText inputServer = new EditText(this);
@@ -1296,7 +1351,6 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
                 if (tmp[0].indexOf("localhost") >= 0) {
                     Toast.makeText(MainActivity.this, "配置信息错误，本机调试请访问 本机局域网IP:8080(如192.168.1.101:8080) 获取配置信息进行配置!",
                             Toast.LENGTH_LONG).show();
-
                     return;
                 }
                 //检查电池白名单权限
@@ -1317,7 +1371,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
         builder.show();
     }
 
-    //检测心跳
+    // 检测心跳
     public void doStart(View view) {
         if (!isOk) {
             Toast.makeText(MainActivity.this, "请您先配置!", Toast.LENGTH_SHORT).show();
@@ -1469,15 +1523,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
                 editor.putString("logsStr", "");
                 editor.commit();
                 LogsTextView.setText("日志：null");
-                    /*
-                     runOnUiThread(new Runnable() {
-                     @Override
-                     public void run() {                         
-                     //清空TextView当前内容
-                     LogsTextView.setText("日志：null");
-                     }                     
-                     });
-                     */
+
             }
         });
     }
@@ -1651,7 +1697,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
     }
 
 
-    //跳转到通知监听设置页面
+    // 跳转到通知监听设置页面
     protected boolean gotoNotificationAccessSetting() {
         try {
             Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
@@ -1680,56 +1726,7 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
     }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        //扫描结果回调
-        if (requestCode == AppConstants.REQ_QR_CODE && resultCode == RESULT_OK) {
-            Bundle bundle = data.getExtras();
-            String scanResult = bundle.getString(AppConstants.INTENT_EXTRA_KEY_QR_SCAN);
 
-            String[] tmp = scanResult.split("/");
-            if (tmp.length != 2) {
-                Toast.makeText(MainActivity.this, "二维码错误，请您扫描网站上显示的二维码!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            String t = String.valueOf(new Date().getTime());
-            String sign = md5(t + tmp[1]);
-
-
-            OkHttpClient okHttpClient = new OkHttpClient();
-            Request request = new Request.Builder().url("http://" + tmp[0] + "/appHeart?t=" + t + "&sign=" + sign).method("GET", null).build();
-            Call call = okHttpClient.newCall(request);
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    Log.d(TAG, "onResponse: " + response.body().string());
-                    isOk = true;
-
-                }
-            });
-
-            //检查电池白名单权限
-            ignoreBatteryOptimization(this);
-            //将扫描出的信息显示出来
-            txthost.setText(" 通知地址：" + tmp[0]);
-            txtkey.setText(" 通讯密钥：" + tmp[1]);
-            host = tmp[0];
-            key = tmp[1];
-
-            SharedPreferences.Editor editor = getSharedPreferences("shinian", MODE_PRIVATE).edit();
-            editor.putString("host", host);
-            editor.putString("key", key);
-            editor.commit();
-
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
