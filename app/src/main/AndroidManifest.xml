@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.shinian.pay">
-<!-- Android 11+ 包可见性配置 -->
-<queries>
-    <package android:name="com.tencent.mm" />
-    <package android:name="com.eg.android.AlipayGphone" />
-</queries>
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        package="com.shinian.pay">
+    <!-- Android 11+ 包可见性配置 -->
+    <queries>
+        <package android:name="com.tencent.mm"/>
+        <package android:name="com.eg.android.AlipayGphone"/>
+    </queries>
 
     <!-- 请求忽略电池优化 -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
@@ -53,21 +53,21 @@
     <uses-feature android:name="android.hardware.camera.autofocus"/>
 
     <supports-screens
-        android:largeScreens="true"
-        android:normalScreens="true"
-        android:anyDensity="true"
-        android:smallScreens="true"/>
+            android:largeScreens="true"
+            android:normalScreens="true"
+            android:anyDensity="true"
+            android:smallScreens="true"/>
 
     <application
-        android:usesCleartextTraffic="true"
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+            android:usesCleartextTraffic="true"
+            android:allowBackup="true"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/app_name"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme">
 
         <activity android:name=".ui.MainActivity"
-            android:exported="true">
+                  android:exported="true">
 
             <intent-filter>
 
@@ -81,47 +81,47 @@
 
 
         <activity
-            android:name=".ui.HelpActivity"
-            android:label="@string/HelpActivity"/>
+                android:name=".ui.HelpActivity"
+                android:label="@string/HelpActivity"/>
 
 
         <activity
-            android:name=".ui.SettingActivity"
-            android:label="@string/SettingActivity"
-            android:launchMode="singleTask"/>
+                android:name=".ui.SettingActivity"
+                android:label="@string/SettingActivity"
+                android:launchMode="singleTask"/>
 
 
         <activity
-            android:name=".ui.SinglePixelActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
-            android:excludeFromRecents="true"
-            android:finishOnTaskLaunch="false"
-            android:launchMode="singleInstance"
-            android:theme="@style/AppTheme"/>
+                android:name=".ui.SinglePixelActivity"
+                android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
+                android:excludeFromRecents="true"
+                android:finishOnTaskLaunch="false"
+                android:launchMode="singleInstance"
+                android:theme="@style/AppTheme"/>
 
         <activity android:name="com.google.zxing.activity.CaptureActivity"/>
 
         <!-- FileProvider 用于分享 APK 文件 -->
         <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="${applicationId}.fileprovider"
+                android:exported="false"
+                android:grantUriPermissions="true">
             <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/file_paths"/>
         </provider>
 
         <activity
-            android:name=".ui.AboutActivity"
-            android:label="关于软件"
-            android:launchMode="singleTask"/>
+                android:name=".ui.AboutActivity"
+                android:label="关于软件"
+                android:launchMode="singleTask"/>
 
         <service
-            android:name=".service.PayNotificationListenerService"
-            android:label="@string/qx"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-            android:exported="true">
+                android:name=".service.PayNotificationListenerService"
+                android:label="@string/qx"
+                android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+                android:exported="true">
 
             <intent-filter>
 
@@ -132,54 +132,54 @@
         </service>
 
         <service
-            android:name=".service.ForeService"
-            android:enabled="true"
-            android:exported="true"
-            android:foregroundServiceType="dataSync"/>
+                android:name=".service.ForeService"
+                android:enabled="true"
+                android:exported="true"
+                android:foregroundServiceType="dataSync"/>
 
         <service
-            android:name=".service.DaemonService"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":daemon_service"
-            android:foregroundServiceType="dataSync"/>
+                android:name=".service.DaemonService"
+                android:enabled="true"
+                android:exported="true"
+                android:process=":daemon_service"
+                android:foregroundServiceType="dataSync"/>
 
         <service
-            android:name=".service.CancelNoticeService"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":service"
-            android:foregroundServiceType="dataSync"/>
+                android:name=".service.CancelNoticeService"
+                android:enabled="true"
+                android:exported="true"
+                android:process=":service"
+                android:foregroundServiceType="dataSync"/>
 
         <service
-            android:name=".service.PlayerMusicService"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":music_service"/>
+                android:name=".service.PlayerMusicService"
+                android:enabled="true"
+                android:exported="true"
+                android:process=":music_service"/>
 
         <service
-            android:name=".service.AliveJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+                android:name=".service.AliveJobService"
+                android:permission="android.permission.BIND_JOB_SERVICE"/>
 
         <!-- Native 守护服务 -->
         <service
-            android:name=".service.NativeDaemonService"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":native_daemon"/>
+                android:name=".service.NativeDaemonService"
+                android:enabled="true"
+                android:exported="true"
+                android:process=":native_daemon"/>
 
         <!-- 同步适配器服务 -->
         <service
-            android:name=".service.SyncAdapterService"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":sync_adapter">
+                android:name=".service.SyncAdapterService"
+                android:enabled="true"
+                android:exported="true"
+                android:process=":sync_adapter">
             <intent-filter>
-                <action android:name="android.content.SyncAdapter" />
+                <action android:name="android.content.SyncAdapter"/>
             </intent-filter>
             <meta-data
-                android:name="android.content.SyncAdapter"
-                android:resource="@xml/syncadapter" />
+                    android:name="android.content.SyncAdapter"
+                    android:resource="@xml/syncadapter"/>
         </service>
 
         <!-- 账户认证器 -->
@@ -194,24 +194,12 @@
                     android:resource="@xml/authenticator"/>
         </service>
 
-        <!-- 同步适配器服务 -->
-        <service
-                android:name="android.content.SyncAdapterType"
-                android:exported="true">
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter"/>
-            </intent-filter>
-            <meta-data
-                    android:name="android.content.SyncAdapter"
-                    android:resource="@xml/syncadapter"/>
-        </service>
-
         <!-- 虚拟 ContentProvider (用于 SyncAdapter) -->
         <provider
-            android:name=".provider.SyncProvider"
-            android:authorities="com.shinian.pay.provider"
-            android:exported="false"
-            android:syncable="true" />
+                android:name=".provider.SyncProvider"
+                android:authorities="com.shinian.pay.provider"
+                android:exported="false"
+                android:syncable="true"/>
 
 
     </application>
