@@ -89,9 +89,18 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+
+        // 输出关键日志，方便调试
+        Log.d(TAG, "========== MainActivity onCreate 开始 ==========");
+        Log.d(TAG, "设备信息：" + Build.MANUFACTURER + " " + Build.MODEL);
+        Log.d(TAG, "Android 版本：" + Build.VERSION.RELEASE + " (API " + Build.VERSION.SDK_INT + ")");
+        Log.d(TAG, "MIUI 版本：" + getMiuiVersion());
+        
         // 自动适配屏幕
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         setContentView(R.layout.activity_main);
+
+        Log.d(TAG, "布局加载完成");
 
 
         //查找组件
@@ -108,8 +117,33 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
             bqTextView.setPaintFlags(bqTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         }
 
-        // 开始前台服务
-        startService(new Intent(MainActivity.this, ForeService.class));
+        // 延迟启动前台服务，避免在 onCreate 时阻塞 UI 线程
+        // Android 14 需要在 5 秒内调用 startForeground()
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Intent serviceIntent = new Intent(MainActivity.this, ForeService.class);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        // Android 8.0+ 必须使用 startForegroundService
+                        startForegroundService(serviceIntent);
+                        Log.d(TAG, "已调用 startForegroundService");
+                    } else {
+                        startService(serviceIntent);
+                        Log.d(TAG, "已调用 startService");
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "启动前台服务失败：" + e.getMessage(), e);
+                    // 在主线程显示 Toast
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MainActivity.this, "服务启动失败，请检查权限", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        }, 1000); // 延迟 1 秒启动，确保 Activity 完全初始化
 
 
 
@@ -200,6 +234,45 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
             isOk = true;
         }
 
+        Log.d(TAG, "========== MainActivity onCreate 完成 ==========");
+
+    }
+
+    /**
+     * 获取 MIUI 版本号
+     *
+     * @return MIUI 版本字符串，如果不是 MIUI 则返回空字符串
+     */
+    private String getMiuiVersion() {
+        try {
+            Class<?> clazz = Class.forName("miui.os.Build");
+            java.lang.reflect.Field field = clazz.getDeclaredField("VERSION_INCREMENT");
+            Object value = field.get(null);
+            return value != null ? value.toString() : "未知";
+        } catch (Exception e) {
+            return "非 MIUI 设备";
+        }
+    }
+
+    /**
+     * 请求忽略电池优化（小米手机重要）
+     */
+    private void requestIgnoreBatteryOptimization() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            if (pm != null && !pm.isIgnoringBatteryOptimizations(getPackageName())) {
+                try {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(Uri.parse("package:" + getPackageName()));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    Log.d(TAG, "已请求电池优化白名单");
+                } catch (Exception e) {
+                    Log.e(TAG, "请求电池优化白名单失败", e);
+                }
+            }
+        }
     }
 
     /**

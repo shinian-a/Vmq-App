@@ -59,6 +59,7 @@
             android:smallScreens="true"/>
 
     <application
+            android:name=".VmqApplication"
             android:usesCleartextTraffic="true"
             android:allowBackup="true"
             android:icon="@drawable/ic_launcher"

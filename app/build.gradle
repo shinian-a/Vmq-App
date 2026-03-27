@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.shinian.pay"
-    compileSdk = 36
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.shinian.pay"
         minSdk = 21
-        targetSdk = 36
+        targetSdk = 34
         versionCode = 13
         versionName = "3.0"
 
@@ -52,7 +52,7 @@ android {
     }
 
     // 强制排除旧版本 Kotlin 依赖
-    configurations.all {
+    configurations.configureEach {
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
     }

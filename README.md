@@ -29,10 +29,19 @@
 
 - **开发语言**：Java + XML
 - **目标平台**：Android 5.0+ (API 21)
-- **编译 SDK**：Android 36
+- **编译 SDK**：Android 34（已优化兼容性）
 - **构建工具**：Gradle 8.12.0
 - **开发环境**：Android Studio / AIDE
 
+### 📱 设备兼容性说明
+
+#### ✅ 已测试支持的设备
+
+- 小米/Redmi 系列（MIUI 12-14）
+- 华为/荣耀系列
+- OPPO/Vivo 系列
+- 三星系列
+- Google Pixel 系列
 
 ## 📥 安装使用
 
@@ -116,6 +125,7 @@ git clone https://github.com/shinian-a/Vmq-App.git
 ### 联系方式
 - 📧 邮箱：[shiniana@qq.com](mailto:shiniana@qq.com)
 - 💡 如有任何建议或遇到问题，欢迎致信交流
+- 反馈请建立 issue
 
 ### 致谢
 本项目基于 [V免签](https://github.com/szvone/Vmq) 开发，感谢原作者的贡献。
