@@ -202,13 +202,24 @@ public class PayNotificationListenerService extends NotificationListenerService 
     public static String getMoney(String content) {
         // 空值检查
         if (content == null || content.isEmpty()) return null;
-        int shoukuanIndex = content.indexOf("收款");
-        if (shoukuanIndex < 0) return null;
 
-        String afterShoukuan = content.substring(shoukuanIndex);
+        // 支持多种关键词：收款、付款、到账、转入
+        int startIndex = -1;
+        String[] keywords = {"收款", "付款", "到账", "转入"};
+        for (String keyword : keywords) {
+            int index = content.indexOf(keyword);
+            if (index >= 0) {
+                startIndex = index;
+                break;
+            }
+        }
+
+        // 如果没有找到任何关键词，尝试从整个内容中提取
+        String searchText = (startIndex >= 0) ? content.substring(startIndex) : content;
+
         List<String> validAmounts = new ArrayList<>();
         // 创建正则表达式模式
-        java.util.regex.Matcher matcher = MONEY_PATTERN.matcher(afterShoukuan);
+        java.util.regex.Matcher matcher = MONEY_PATTERN.matcher(searchText);
 
         while (matcher.find()) {
             String matched = matcher.group();
@@ -308,10 +319,16 @@ public class PayNotificationListenerService extends NotificationListenerService 
         if (mainHandler == null) {
             mainHandler = new Handler(Looper.getMainLooper());
         }
-        
-        mainHandler.post(() -> 
-            Toast.makeText(getApplicationContext(), 
-                "监听到" + platform + "收款消息但未匹配到金额！", 
+
+        // 记录到日志框
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            sendMonitorLogs(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
+                    + "\r\r\r\r" + "监听到" + platform + "收款消息但未匹配到金额！");
+        }
+
+        mainHandler.post(() ->
+            Toast.makeText(getApplicationContext(),
+                "监听到" + platform + "收款消息但未匹配到金额！",
                 Toast.LENGTH_SHORT).show()
         );
     }
