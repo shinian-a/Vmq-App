@@ -136,6 +136,6 @@ git clone https://github.com/shinian-a/Vmq-App.git
 
 **如果这个项目对您有帮助，请给一个免费的 Star⭐！**
 
-[![Star History Chart](https://api.star-history.com/svg?repos=shinian-a/Vmq-App&type=Date)](https://star-history.com/#shinian-a/Vmq-App&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=shinian-a/Vmq-App&type=Date)](https://star-history.dera.page/#shinian-a/Vmq-App&Date)
 
 </div>
