@@ -108,17 +108,26 @@ public class SaveImageUtils {
             //EXTERNAL_CONTENT_URI代表外部存储器，该值不变
             Uri uri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
             OutputStream os = null;
+            boolean success = false;
             try {
                 if (uri != null) {
                     //若生成了uri，则表示该文件添加成功
                     //使用流将内容写入该uri中即可
                     os = context.getContentResolver().openOutputStream(uri);
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+                    if (os == null) {
+                        throw new IOException("Failed to open output stream");
+                    }
+                    if (!bitmap.compress(Bitmap.CompressFormat.PNG, 100, os)) {
+                        throw new IOException("Failed to compress bitmap");
+                    }
                     os.flush();
+                    os.close();
+                    os = null;
                     ContentValues completed = new ContentValues();
                     completed.put(MediaStore.Images.Media.IS_PENDING, 0);
                     context.getContentResolver().update(uri, completed, null, null);
                     path = uri.toString();
+                    success = true;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -131,6 +140,9 @@ public class SaveImageUtils {
                         os.close();
                     } catch (IOException e) {
                         e.printStackTrace();
+                        if (uri != null && !success) {
+                            context.getContentResolver().delete(uri, null, null);
+                        }
                     }
                 }
             }

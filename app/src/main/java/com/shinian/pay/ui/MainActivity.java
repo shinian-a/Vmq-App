@@ -1673,19 +1673,29 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
     }
 
     private void saveWechatDonationCode() {
-        bitmap_image = BitmapFactory.decodeResource(getResources(), R.drawable.wxpay);
-        String savedUri = SaveImageUtils.fileSaveToPublic(
-                MainActivity.this,
-                "微信赞赏码.png",
-                bitmap_image
-        );
-        if (savedUri == null) {
-            Toast.makeText(MainActivity.this, "收款码保存失败", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.wxpay);
+                final String savedUri = SaveImageUtils.fileSaveToPublic(
+                        MainActivity.this,
+                        "微信赞赏码.png",
+                        bitmap
+                );
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (savedUri == null) {
+                            Toast.makeText(MainActivity.this, "收款码保存失败", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
-        openWeixinToQE_Code(MainActivity.this);
-        Toast.makeText(MainActivity.this, "收款码已保存至相册,请选择相册收款码打赏~", Toast.LENGTH_LONG).show();
+                        openWeixinToQE_Code(MainActivity.this);
+                        Toast.makeText(MainActivity.this, "收款码已保存至相册,请选择相册收款码打赏~", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }).start();
     }
 
     // Android 9 及以下写入公共相册需要存储权限
