@@ -981,24 +981,10 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
                 public void onClick(DialogInterface dialog, int which) {
                     String fs = fruits[which];
                     if (fs.equals("微信打赏")) {
-                        //requestMyPermissions();
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            //判断读写权限
-                            if (pdPermissions()) {
-                                //获取本地图片bitmap
-                                bitmap_image = BitmapFactory.decodeResource(getResources(), R.drawable.wxpay);
-                                SaveImageUtils.fileSaveToPublic(MainActivity.this, "微信赞赏码", bitmap_image);
-                                //打开微信扫一扫
-                                openWeixinToQE_Code(MainActivity.this);
-                                Toast.makeText(MainActivity.this, "收款码已保存至相册,请选择相册收款码打赏~", Toast.LENGTH_LONG).show();
-                            } else {
-                                //申请读写权限
-                                requestMyPermissions();
-                            }
-
+                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && !pdPermissions()) {
+                            requestMyPermissions();
                         } else {
-                            Toast.makeText(MainActivity.this, "无法打赏", Toast.LENGTH_SHORT).show();
-
+                            saveWechatDonationCode();
                         }
                             /*} else if (fs.equals("支付宝打赏")) {
                              openAliPayPay(ALIPAY_PERSON);
@@ -1170,33 +1156,9 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
     }
 
 
-    /**
-     * 保存图片到本地
-     * 仅支持Android10以下
-     *
-     * @param name   图片的名字，比如传入“123”，最终保存的图片为“123.jpg”
-     * @param bitmap 本地图片或者网络图片转成的Bitmap格式的文件
-     * @return
-     */
+    /** 保存图片到系统相册。 */
     public void saveImage(String name, Bitmap bitmap) {
-        File pathFile = new File(Environment.getExternalStorageDirectory() + File.separator + Environment.DIRECTORY_PICTURES + File.separator);
-        if (!pathFile.exists()) {
-            pathFile.mkdir();
-        }
-        File file = new File(pathFile, name + ".jpg");
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
-            fos.close();
-            // 最后通知图库更新
-            //ToastsUtils.centerToast(this, "保存成功");
-            Uri localUri = Uri.fromFile(file);
-            Intent localIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, localUri);
-            sendBroadcast(localIntent);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        SaveImageUtils.fileSaveToPublic(this, name + ".png", bitmap);
     }
 
     //打开支付宝扫一扫
@@ -1310,12 +1272,6 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             // 申请权限
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, AppConstants.REQ_PERM_CAMERA);
-            return;
-        }
-        // 申请文件读写权限（部分朋友遇到相册选图需要读写权限的情况，这里一并写一下）
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            // 申请权限
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, AppConstants.REQ_PERM_EXTERNAL_STORAGE);
             return;
         }
         // 二维码扫码
@@ -1716,28 +1672,38 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
         return "";
     }
 
-    //判断读写权限
-    private boolean pdPermissions() {
-        boolean qx = false;
-        qx = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-        return qx;
+    private void saveWechatDonationCode() {
+        bitmap_image = BitmapFactory.decodeResource(getResources(), R.drawable.wxpay);
+        String savedUri = SaveImageUtils.fileSaveToPublic(
+                MainActivity.this,
+                "微信赞赏码.png",
+                bitmap_image
+        );
+        if (savedUri == null) {
+            Toast.makeText(MainActivity.this, "收款码保存失败", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        openWeixinToQE_Code(MainActivity.this);
+        Toast.makeText(MainActivity.this, "收款码已保存至相册,请选择相册收款码打赏~", Toast.LENGTH_LONG).show();
     }
 
-    //动态申请读写权限
-    private void requestMyPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            //没有授权，编写申请权限代码
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
-        } else {
-            Log.d(TAG, "requestMyPermissions: 有写SD权限");
-        }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            //没有授权，编写申请权限代码
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
-        } else {
-            Log.d(TAG, "requestMyPermissions: 有写SD权限");
-        }
+    // Android 9 及以下写入公共相册需要存储权限
+    private boolean pdPermissions() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+                || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED;
+    }
 
+    // Android 9 及以下动态申请公共目录写权限
+    private void requestMyPermissions() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q && !pdPermissions()) {
+            ActivityCompat.requestPermissions(
+                    MainActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    AppConstants.REQ_PERM_EXTERNAL_STORAGE
+            );
+        }
     }
 
     //重启监听服务
@@ -1827,13 +1793,11 @@ public class MainActivity extends AppCompatActivity implements OnLongClickListen
                 }
                 break;
             case AppConstants.REQ_PERM_EXTERNAL_STORAGE:
-                // 文件读写权限申请
+                // Android 9 及以下公共相册写权限申请
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // 获得授权
-                    startQrCode(null);
+                    saveWechatDonationCode();
                 } else {
-                    // 被禁止授权
-                    Toast.makeText(MainActivity.this, "请至权限中心打开本应用的文件读写权限", Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "请至权限中心打开本应用的存储权限", Toast.LENGTH_LONG).show();
                 }
                 break;
         }
