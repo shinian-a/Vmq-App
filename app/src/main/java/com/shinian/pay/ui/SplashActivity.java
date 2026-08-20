@@ -10,20 +10,17 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-
 import androidx.annotation.Nullable;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.shinian.pay.R;
-
-import org.json.JSONArray;
-
 import io.dcloud.ads.core.DCloudAdManager;
 import io.dcloud.ads.core.entry.SplashConfig;
 import io.dcloud.ads.core.v2.splash.DCSplashAd;
 import io.dcloud.ads.core.v2.splash.DCSplashAdListener;
 import io.dcloud.ads.core.v2.splash.DCSplashAdLoadListener;
+import org.json.JSONArray;
 
 public class SplashActivity extends Activity {
 
@@ -52,7 +49,7 @@ public class SplashActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //hideSystemBars();
+        hideSystemBars();
 
         setContentView(R.layout.activity_splash);
 
@@ -267,6 +264,7 @@ public class SplashActivity extends Activity {
         timeoutHandler.removeCallbacks(timeoutRunnable);
     }
 
+    // 沉浸全屏
     private void hideSystemBars() {
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         WindowInsetsControllerCompat controller =
