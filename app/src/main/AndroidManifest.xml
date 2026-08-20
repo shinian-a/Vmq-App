@@ -1,108 +1,119 @@
 <?xml version='1.0' encoding='utf-8'?>
 <manifest
         xmlns:android="http://schemas.android.com/apk/res/android"
-        package="com.shinian.pay">
-    <!-- Android 11+ 包可见性配置 -->
+        xmlns:tools="http://schemas.android.com/tools">
+
     <queries>
-        <package android:name="com.tencent.mm"/>
-        <package android:name="com.eg.android.AlipayGphone"/>
+        <package android:name="com.tencent.mm" />
+        <package android:name="com.eg.android.AlipayGphone" />
+        <package android:name="com.tencent.wework" />
     </queries>
 
-    <!-- 请求忽略电池优化 -->
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+    <!-- 网络 -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- 完全的网络访问权限 -->
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- 相机 -->
+    <uses-permission android:name="android.permission.CAMERA" />
 
-    <!-- 控制振动 -->
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <!-- 前台服务 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
-    <!-- 防止手机休眠 -->
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <!-- 电池优化白名单 -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
-    <!-- 修改或删除 SD 卡中的内容 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!-- 开机自启 -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <!-- 读取存储卡中的内容 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!-- 唤醒锁 & 振动 -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
-    <!-- 拍摄照片和录制视频 -->
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- 存储：Android 12 及以下 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+                     android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+                     android:maxSdkVersion="32"
+                     tools:ignore="ScopedStorage" />
 
-    <!-- 运行前台服务 -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <!-- 存储：Android 13+ 细分媒体权限 -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!-- 通知（Android 13+ 运行时权限） -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
 
-    <!-- 前台服务数据同步权限 -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
-
-    <!-- Account Sync 所需权限 -->
-    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
-    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="android.permission.WRITE_SYNC_ADAPTER"/>
-
-    <!-- JobScheduler 所需权限 -->
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-
-    <!-- 声明相机硬件特性 -->
-    <uses-feature android:name="android.hardware.camera" android:required="false"/>
-
-    <!--相机对焦-->
-    <uses-feature android:name="android.hardware.camera.autofocus"/>
+    <!-- 相机硬件 -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
 
     <supports-screens
-            android:largeScreens="true"
+            android:smallScreens="true"
             android:normalScreens="true"
-            android:anyDensity="true"
-            android:smallScreens="true"/>
+            android:largeScreens="true"
+            android:anyDensity="true" />
 
     <application
             android:name=".VmqApplication"
-            android:usesCleartextTraffic="true"
-            android:allowBackup="true"
-            android:icon="@drawable/ic_launcher"
+            android:dataExtractionRules="@xml/data_extraction_rules" android:icon="@drawable/ic_launcher"
             android:label="@string/app_name"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:allowBackup="false"
+            android:usesCleartextTraffic="true"
+            tools:targetApi="35">
 
-        <activity android:name=".ui.MainActivity"
-                  android:exported="true">
+        <!-- ========== Activity ========== -->
 
+        <activity
+                android:name=".ui.SplashActivity"
+                android:theme="@style/SplashTheme"
+                android:exported="true">
             <intent-filter>
-
-                <action android:name="android.intent.action.MAIN"/>
-
-                <category android:name="android.intent.category.LAUNCHER"/>
-
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
+        <activity
+                android:name=".ui.MainActivity"
+                android:exported="false" />
 
         <activity
                 android:name=".ui.HelpActivity"
-                android:label="@string/HelpActivity"/>
-
+                android:label="@string/HelpActivity"
+                android:exported="false" />
 
         <activity
                 android:name=".ui.SettingActivity"
                 android:label="@string/SettingActivity"
-                android:launchMode="singleTask"/>
+                android:launchMode="singleTask"
+                android:exported="false" />
 
 
         <activity
-                android:name=".ui.SinglePixelActivity"
-                android:configChanges="keyboardHidden|orientation|screenSize|navigation|keyboard"
-                android:excludeFromRecents="true"
-                android:finishOnTaskLaunch="false"
-                android:launchMode="singleInstance"
-                android:theme="@style/AppTheme"/>
+                android:name="com.google.zxing.activity.CaptureActivity"
+                android:exported="false" />
 
-        <activity android:name="com.google.zxing.activity.CaptureActivity"/>
+        <activity
+                android:name=".ui.AboutActivity"
+                android:label="关于软件"
+                android:launchMode="singleTask"
+                android:exported="false" />
 
-        <!-- FileProvider 用于分享 APK 文件 -->
+
+        <provider
+                android:name="androidx.startup.InitializationProvider"
+                android:authorities="${applicationId}.androidx-startup"
+                android:exported="false"
+                tools:node="merge">
+            <meta-data
+                    android:name="androidx.work.WorkManagerInitializer"
+                    android:value="androidx.startup"
+                    tools:node="remove" />
+        </provider>
+
+        <!-- ========== FileProvider（APK分享） ========== -->
         <provider
                 android:name="androidx.core.content.FileProvider"
                 android:authorities="${applicationId}.fileprovider"
@@ -110,98 +121,31 @@
                 android:grantUriPermissions="true">
             <meta-data
                     android:name="android.support.FILE_PROVIDER_PATHS"
-                    android:resource="@xml/file_paths"/>
+                    android:resource="@xml/file_paths" />
         </provider>
 
-        <activity
-                android:name=".ui.AboutActivity"
-                android:label="关于软件"
-                android:launchMode="singleTask"/>
 
+        <!-- 通知监听服务 -->
         <service
                 android:name=".service.PayNotificationListenerService"
                 android:label="@string/qx"
                 android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
                 android:exported="true">
-
             <intent-filter>
-
-                <action android:name="android.service.notification.NotificationListenerService"/>
-
+                <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
-
         </service>
 
         <service
                 android:name=".service.ForeService"
-                android:enabled="true"
-                android:exported="true"
-                android:foregroundServiceType="dataSync"/>
-
-        <service
-                android:name=".service.DaemonService"
-                android:enabled="true"
-                android:exported="true"
-                android:process=":daemon_service"
-                android:foregroundServiceType="dataSync"/>
-
-        <service
-                android:name=".service.CancelNoticeService"
-                android:enabled="true"
-                android:exported="true"
-                android:process=":service"
-                android:foregroundServiceType="dataSync"/>
-
-        <service
-                android:name=".service.PlayerMusicService"
-                android:enabled="true"
-                android:exported="true"
-                android:process=":music_service"/>
-
-        <service
-                android:name=".service.AliveJobService"
-                android:permission="android.permission.BIND_JOB_SERVICE"/>
-
-        <!-- Native 守护服务 -->
-        <service
-                android:name=".service.NativeDaemonService"
-                android:enabled="true"
-                android:exported="true"
-                android:process=":native_daemon"/>
-
-        <!-- 同步适配器服务 -->
-        <service
-                android:name=".service.SyncAdapterService"
-                android:enabled="true"
-                android:exported="true"
-                android:process=":sync_adapter">
-            <intent-filter>
-                <action android:name="android.content.SyncAdapter"/>
-            </intent-filter>
-            <meta-data
-                    android:name="android.content.SyncAdapter"
-                    android:resource="@xml/syncadapter"/>
-        </service>
-
-        <!-- 账户认证器 -->
-        <service
-                android:name=".service.AccountAuthenticatorService"
-                android:exported="true">
-            <intent-filter>
-                <action android:name="android.accounts.AccountAuthenticator"/>
-            </intent-filter>
-            <meta-data
-                    android:name="android.accounts.AccountAuthenticator"
-                    android:resource="@xml/authenticator"/>
-        </service>
-
-        <!-- 虚拟 ContentProvider (用于 SyncAdapter) -->
-        <provider
-                android:name=".provider.SyncProvider"
-                android:authorities="com.shinian.pay.provider"
                 android:exported="false"
-                android:syncable="true"/>
+                android:foregroundServiceType="specialUse">
 
+            <!--Android 14+声明specialUse-->
+            <property
+                    android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                    android:value="Payment notification monitoring for real-time transaction verification" />
+        </service>
 
     </application>
 

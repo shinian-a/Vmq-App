@@ -1,53 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:background="#FFFFFFFF"
-	android:fitsSystemWindows="true">
-
-	<!-- 标题栏 -->
-	<LinearLayout
-		android:orientation="horizontal"
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical"
 		android:layout_width="match_parent"
-		android:layout_height="56dp"
-		android:background="#FF03A9F5"
-		android:gravity="center_vertical"
-		android:paddingStart="8dp"
-		android:paddingEnd="16dp">
+		android:layout_height="match_parent"
+		android:background="#FFFFFFFF"
+		android:fitsSystemWindows="true">
 
-		<!-- 返回按钮 -->
+	<!-- 标题栏 (保持不变) -->
+	<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="56dp"
+			android:background="#FF03A9F5"
+			android:gravity="center_vertical"
+			android:paddingStart="8dp"
+			android:paddingEnd="16dp">
+
 		<ImageView
-			android:id="@+id/btn_back"
-			android:layout_width="40dp"
-			android:layout_height="40dp"
-			android:src="@drawable/btn_back"
-			android:scaleType="fitCenter"
-			android:padding="8dp"
-			android:background="?android:attr/selectableItemBackgroundBorderless"
-			android:contentDescription="返回"/>
+				android:id="@+id/btn_back"
+				android:layout_width="40dp"
+				android:layout_height="40dp"
+				android:src="@drawable/btn_back"
+				android:scaleType="fitCenter"
+				android:padding="8dp"
+				android:background="?android:attr/selectableItemBackgroundBorderless"
+				android:contentDescription="返回"/>
 
-		<!-- 标题 -->
 		<TextView
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
-			android:layout_weight="1"
-			android:text="帮助文档"
-			android:textColor="#FFFFFFFF"
-			android:textSize="20sp"
-			android:textStyle="bold"
-			android:layout_marginStart="8dp"/>
-
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="帮助文档"
+				android:textColor="#FFFFFFFF"
+				android:textSize="20sp"
+				android:textStyle="bold"
+				android:layout_marginStart="8dp"/>
 	</LinearLayout>
 
-	<ScrollView
+	<ScrollView android:id="@+id/scroll_help"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
 
 
-	
-	
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
@@ -179,7 +174,14 @@
 
 	</LinearLayout>
 
+
 </ScrollView>
+	<!--WebView 控件，默认隐藏 -->
+	<WebView
+			android:id="@+id/webview"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:visibility="gone" />
 
 </LinearLayout>
 

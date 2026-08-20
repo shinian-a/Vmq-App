@@ -1,6 +1,5 @@
 package com.shinian.pay.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageInfo;
@@ -8,11 +7,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.shinian.pay.R;
+import com.shinian.pay.utils.AlertDialogUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -160,7 +159,7 @@ public class AboutActivity extends AppCompatActivity {
      */
     public void contactDeveloper(View v) {
         try {
-            AlertDialogUtil.showAlertDialog(this, "联系方式", 
+            AlertDialogUtil.showAlertDialog(this, "联系方式",
                 "邮箱：shiniana@qq.com\n" +
                 "QQ 群：https://qm.qq.com/q/ESWRuTY6uk\n\n" +
                 "如有任何问题或建议，欢迎联系！");

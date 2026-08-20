@@ -9,16 +9,14 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+
 import androidx.annotation.Nullable;
+
 import com.shinian.pay.R;
 import com.shinian.pay.ui.MainActivity;
 
-
 public class ForeService extends Service {
 
-    /**
-     * 通知栏常驻类
-     */
     private static final String TAG = "ForeService";
     private static final String NOTIFICATION_CHANNEL_ID = "vmq_core_service";
     private static final String NOTIFICATION_CHANNEL_NAME = "V免签监控端_Pro 核心服务";
@@ -28,142 +26,133 @@ public class ForeService extends Service {
     public void onCreate() {
         Log.d(TAG, "onCreate() called");
         super.onCreate();
-        // 注意：不在这里调用 setNotification()
-        // Android 14 要求在 onStartCommand 中快速调用 startForeground()
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand() called");
-        // Android 14 关键修复：立即调用 startForeground()
-        // 必须在 5 秒内完成，越快越好
-        setNotification();
-        // 确保服务被杀死后重启
+        // ⚠️ 必须在 5 秒内调用 startForeground()，否则系统杀进程
+        if (!setNotification()) {
+            stopSelf(startId);
+            return START_NOT_STICKY;
+        }
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy() called");
-        stopForeground(true);
+        // ✅ 修复：API 33+ 使用新 API，旧版用布尔参数
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            stopForeground(STOP_FOREGROUND_REMOVE);
+        } else {
+            stopForeground(true);
+        }
         super.onDestroy();
     }
 
     /**
-     * 设置前台服务通知
+     * 启动前台服务通知（兼容 Android 7 ~ 16）
      */
-    public void setNotification() {
+    private boolean setNotification() {
         Log.d(TAG, "设置前台通知");
 
         try {
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationManager notificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             if (notificationManager == null) {
                 Log.e(TAG, "通知管理器不可用");
-                return;
+                return false;
             }
 
-            // 创建通知渠道（Android O 及以上）
+            // Android 13+ 未授予通知权限时，通知可能不显示在通知栏，
+            // 但仍必须调用 startForeground，否则服务会被系统终止。
             createNotificationChannel(notificationManager);
-
-            // 构建通知
             Notification notification = buildNotification();
 
-            // 启动前台服务，指定前台服务类型
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                // Android 12+ 需要指定前台服务类型
-                startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
-                Log.d(TAG, "使用 Android 12+ 方式启动前台服务");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                // ✅ Android 14+（API 34）：必须指定 foregroundServiceType
+                startForeground(NOTIFICATION_ID, notification,
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
+                Log.d(TAG, "Android 14+ 方式启动前台服务");
+
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                // Android 8.0+
+                // ✅ Android 8.0 ~ 13（API 26-33）：无需指定 type
                 startForeground(NOTIFICATION_ID, notification);
-                Log.d(TAG, "使用 Android 8.0+ 方式启动前台服务");
+                Log.d(TAG, "Android 8.0+ 方式启动前台服务");
+
             } else {
-                // Android 7.x 及以下
+                // ✅ Android 7.x（API 24-25）
                 startForeground(NOTIFICATION_ID, notification);
-                Log.d(TAG, "使用旧版本方式启动前台服务");
+                Log.d(TAG, "Android 7.x 方式启动前台服务");
             }
+            return true;
+
         } catch (Exception e) {
             Log.e(TAG, "启动前台服务失败：" + e.getMessage(), e);
-            // 如果启动失败，尝试降级方案
-            try {
-                Notification notification = buildNotification();
-                startForeground(NOTIFICATION_ID, notification);
-                Log.d(TAG, "使用降级方案启动前台服务成功");
-            } catch (Exception e2) {
-                Log.e(TAG, "降级方案也失败了：" + e2.getMessage(), e2);
-            }
+            return false;
         }
     }
-    
+
     /**
-     * 创建通知渠道（Android O 及以上必需）
-     * @param notificationManager 通知管理器
+     * 创建通知渠道（Android O+ 必需）
      */
     private void createNotificationChannel(NotificationManager notificationManager) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // ✅ 修复：前台服务常驻通知应使用 IMPORTANCE_LOW，避免发出声音
             NotificationChannel channel = new NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                NOTIFICATION_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT
+                    NOTIFICATION_CHANNEL_ID,
+                    NOTIFICATION_CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_LOW
             );
-            channel.enableLights(true);
-            channel.setLightColor(Color.GREEN);
-            channel.setShowBadge(true);
+            channel.enableLights(false);
+            channel.setShowBadge(false);
+            channel.setDescription("支付监控核心后台服务");
             notificationManager.createNotificationChannel(channel);
         }
     }
-    
+
     /**
-     * 构建前台服务通知
-     * @return 通知对象
+     * 构建前台服务通知（兼容 Android 7 ~ 16）
      */
     private Notification buildNotification() {
         String content = "服务正在后台运行中！";
-        Intent intent = new Intent(this, MainActivity.class);
 
-        // Android 14 兼容性修复：使用 FLAG_IMMUTABLE
-        int pendingIntentFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
+        Intent intent = new Intent(this, MainActivity.class);
+        // ✅ FLAG_IMMUTABLE 从 API 31 开始强制要求
+        int pendingIntentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            pendingIntentFlags |= PendingIntent.FLAG_IMMUTABLE;
+        }
+
         PendingIntent pendingIntent = PendingIntent.getActivity(
-                this,
-                0,
-                intent,
-                pendingIntentFlags
-        );
-        
+                this, 0, intent, pendingIntentFlags);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Notification.Builder builder = new Notification.Builder(this, NOTIFICATION_CHANNEL_ID);
-            builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
-                   .setSmallIcon(R.drawable.ic_launcher)
-                   .setContentTitle(getString(R.string.app_name))
-                   .setContentText(content)
-                   .setWhen(System.currentTimeMillis())
-                   .setContentIntent(pendingIntent)
-                    .setAutoCancel(false)
-                    .setOngoing(true); // 设置为常驻通知
-            // Android 10+ setTicker 已废弃，但为了兼容保留
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-                builder.setTicker(content);
-            }
-            Notification notification = builder.build();
-            notification.flags = Notification.FLAG_ONGOING_EVENT;
-            return notification;
+            // ✅ Android 8.0+ 使用带 channelId 的构造器
+            return new Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setContentTitle(getString(R.string.app_name))
+                    .setContentText(content)
+                    .setWhen(System.currentTimeMillis())
+                    .setContentIntent(pendingIntent)
+                    .setOngoing(true)       // ✅ 只需这一个即可，不需要再手动设 flags
+                    .build();
         } else {
-            Notification.Builder builder = new Notification.Builder(this);
-            builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
-                   .setSmallIcon(R.drawable.ic_launcher)
-                   .setContentTitle(getString(R.string.app_name))
-                   .setContentText(content)
-                   .setTicker(content)
-                   .setWhen(System.currentTimeMillis())
-                   .setContentIntent(pendingIntent)
-                    .setAutoCancel(false)
-                    .setOngoing(true);
-            Notification notification = builder.build();
-            notification.flags = Notification.FLAG_ONGOING_EVENT;
-            return notification;
+            // ✅ Android 7.x 使用旧构造器
+            return new Notification.Builder(this)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setContentTitle(getString(R.string.app_name))
+                    .setContentText(content)
+                    .setTicker(content)     // API < 26 有效
+                    .setWhen(System.currentTimeMillis())
+                    .setContentIntent(pendingIntent)
+                    .setOngoing(true)
+                    .build();
         }
     }
-
 
     @Nullable
     @Override

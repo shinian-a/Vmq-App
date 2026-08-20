@@ -2,17 +2,12 @@
     <string name="layout_scan">扫描二维码</string>
     <string name="layout_album">相册</string>
     <string name="layout_focus_qrcode">请对准二维码进行扫描</string>
-    <string name="note_processing">处理中...</string>
     <string name="note_identify_failed">识别失败</string>
     <string name="note_scan_failed">扫描失败</string>
     <string name="note_no_flashlight">暂时无法开启闪光灯</string>
     <string name="app_name">V免签监控端_Pro</string>
     <string name="HelpActivity">帮助文档</string>
-    <string name="WxPayActivity">微信打赏</string>
     <string name="SettingActivity">软件设置</string>
-    <string name="FeedActivity">意见反馈</string>
-    <string name="skm">请长按保存收款码</string>
-    <string name="WeChat">打开微信扫一扫</string>
     <string name="url">通知地址：请手动配置</string>
     <string name="key">通讯密钥：请手动配置</string>
     <string name="sm">扫码配置</string>
@@ -27,7 +22,6 @@
     <string name="ds">打赏作者</string>
     <string name="gy">关于/帮助</string>
     <string name="setting">软件设置</string>
-    <string name="wxpay_ts">请截图保存赞赏码~点击赞赏码打开微信扫一扫</string>
     <string name="tc">退出程序</string>
     <string name="qx">V免签监听服务[必选]</string>
     <string name="help_title">V免签监控端配置文档</string>
@@ -53,8 +47,5 @@
     <string name="help_05">开启V免签监控端自启动权限[允许后台运行]</string>
     <string name="help_06">勾选不允许电池优化</string>
     <string name="help_07">将软件锁定后台</string>
-
-    <!-- 分享功能相关字符串 -->
-    <string name="share_content">V免签监控端-个人免签收款方案项目下载：%1$s</string>
 
 </resources>

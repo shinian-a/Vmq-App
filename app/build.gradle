@@ -2,27 +2,19 @@ plugins {
     id("com.android.application")
 }
 
-
 android {
     namespace = "com.shinian.pay"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.shinian.pay"
         minSdk = 21
-        targetSdk = 34
-        versionCode = 13
-        versionName = "3.0"
-
+        targetSdk = 35
+        versionCode = 15
+        versionName = "3.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        // ABI 过滤，减少 APK 体积
-        ndk {
-            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
-        }
     }
 
-    // 签名配置
     signingConfigs {
         release {
             storeFile file("${projectDir}/keystore/keystore.jks")
@@ -42,37 +34,46 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release  // 使用签名配置
+            signingConfig signingConfigs.release
         }
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    // 强制排除旧版本 Kotlin 依赖
-    configurations.configureEach {
-        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
-        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
+configurations.configureEach {
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+}
+
 dependencies {
-    // NativeJar
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // 本地 libs
+    implementation fileTree(include: ['*.aar', '*.jar'], dir: './libs')
+
     // AndroidX
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation "androidx.core:core-ktx:1.13.0"
+
     // Material UI
     implementation 'com.google.android.material:material:1.9.0'
-    // OkHttp
-    implementation 'com.squareup.okhttp3:okhttp:4.9.2'
-    // jvm test
+
+    // OkHttp 统一用 4.x（Kotlin 版本）
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+
+    // ZXing
+    implementation 'com.google.zxing:core:3.5.3'
+
+    // WorkManager
+    implementation "androidx.work:work-runtime:2.9.1"
+
+    // Test
     testImplementation 'junit:junit:4.13.2'
-    // androidTest
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation 'androidx.test:runner:1.5.2'
     androidTestImplementation 'androidx.test:rules:1.5.0'
+
 }

@@ -6,8 +6,10 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Process;
 import android.util.Log;
 import com.shinian.pay.manager.AppConstants;
+import com.shinian.pay.worker.KeepAliveWorkManager;
 
 /**
  * 全局 Application 类
@@ -17,6 +19,7 @@ public class VmqApplication extends Application {
 
     private static final String TAG = "VmqApplication";
     private static VmqApplication sInstance;
+    private Thread.UncaughtExceptionHandler previousExceptionHandler;
 
     /**
      * 获取 Application 实例
@@ -34,13 +37,21 @@ public class VmqApplication extends Application {
 
         Log.d(TAG, "Application 初始化");
 
+        // 初始化 WorkManager
+        KeepAliveWorkManager.init(this);
+
         // 设置全局异常捕获，防止启动崩溃
+        previousExceptionHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread thread, Throwable ex) {
                 Log.e(TAG, "未捕获的异常：" + ex.getMessage(), ex);
-                // 记录异常但不退出应用（可选）
-                // android.os.Process.killProcess(android.os.Process.myPid());
+                if (previousExceptionHandler != null) {
+                    previousExceptionHandler.uncaughtException(thread, ex);
+                } else {
+                    Process.killProcess(Process.myPid());
+                    System.exit(10);
+                }
             }
         });
 

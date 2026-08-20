@@ -1,5 +1,10 @@
 <resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
+    <!-- 主界面间距 -->
+    <dimen name="main_padding_h">10dp</dimen>
+    <dimen name="main_padding_v">6dp</dimen>
+    <dimen name="main_section_gap">6dp</dimen>
+
+    <!-- 按钮高度（默认/兜底值） -->
+    <dimen name="btn_action_height">42dp</dimen>
+
 </resources>

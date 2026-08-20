@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/main_padding_h"
+        android:paddingEnd="@dimen/main_padding_h"
+        android:paddingTop="@dimen/main_padding_v"
+        android:paddingBottom="@dimen/main_padding_v"
         tools:context=".ui.MainActivity">
-
-
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="12dp">
 
         <TextView
                 android:id="@+id/txt_host"
@@ -48,10 +42,10 @@
         <Button
                 android:id="@+id/btn_sm"
                 android:layout_width="match_parent"
-                android:layout_height="42dp"
+                android:layout_height="@dimen/btn_action_height"
                 android:onClick="startQrCode"
                 android:text="@string/sm"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="@dimen/main_section_gap"
                 android:background="@drawable/ripple"
                 android:maxLines="1"
                 android:textStyle="bold"
@@ -60,10 +54,10 @@
         <Button
                 android:id="@+id/btn_input"
                 android:layout_width="match_parent"
-                android:layout_height="42dp"
+                android:layout_height="@dimen/btn_action_height"
                 android:onClick="doInput"
                 android:text="@string/pz"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="@dimen/main_section_gap"
                 android:background="@drawable/ripple"
                 android:maxLines="1"
                 android:textStyle="bold"
@@ -72,10 +66,10 @@
         <Button
                 android:id="@+id/btn_start"
                 android:layout_width="match_parent"
-                android:layout_height="42dp"
+                android:layout_height="@dimen/btn_action_height"
                 android:onClick="doStart"
                 android:text="@string/xt"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="@dimen/main_section_gap"
                 android:background="@drawable/ripple"
                 android:maxLines="1"
                 android:textStyle="bold"
@@ -84,106 +78,95 @@
         <Button
                 android:id="@+id/btn_checkpush"
                 android:layout_width="match_parent"
-                android:layout_height="42dp"
+                android:layout_height="@dimen/btn_action_height"
                 android:onClick="checkPush"
                 android:text="@string/jt"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="@dimen/main_section_gap"
                 android:background="@drawable/ripple"
                 android:maxLines="1"
                 android:textStyle="bold"
                 android:textSize="12sp"/>
 
-        <!-- 日志区域：使用 layout_weight 填充剩余空间 -->
+        <!-- 日志容器：固定高度或最大高度，防止撑开页面 -->
         <LinearLayout
-                android:orientation="vertical"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/main_section_gap">
+
+            <!-- 状态栏标题（保持不变） -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="4dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/ht_state"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:onClick="Logs"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textSize="13sp"/>
+
+                <TextView
+                    android:id="@+id/sj_dl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#4CAF50"
+                    android:textStyle="bold|italic"
+                    android:text="@string/dl"
+                    android:onClick="dl"
+                    android:maxLines="1"
+                    style="@style/AppTheme"
+                    android:textSize="12sp"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
+            <!-- ✅ 关键修改：用 ScrollView 包裹 TextView，并限制其高度 -->
+            <ScrollView
+                android:id="@+id/log_scroll_view"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:layout_marginTop="6dp">
+                android:fillViewport="true"
+                android:fadeScrollbars="false"
+                android:scrollbars="vertical"
+                android:background="#000000"
+                android:padding="5dp">
 
-            <!-- 状态栏标题：使用 weight 实现左右自适应 -->
-            <LinearLayout
-                    android:orientation="horizontal"
+                <TextView
+                    android:id="@+id/state_logs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="4dp">
+                    android:overScrollMode="always"
+                    android:textIsSelectable="true"
+                    android:textColor="#07DD0C"
+                    android:fontFamily="monospace"
+                    android:textSize="10sp"
+                    android:lineSpacingExtra="2dp"
+                    android:gravity="top"/>
+            </ScrollView>
 
-                <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:text="@string/ht_state"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:onClick="Logs"
-                        android:maxLines="1"
-                        android:ellipsize="end"
-                        android:textSize="13sp"/>
-
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#4CAF50"
-                        android:textStyle="bold|italic"
-                        android:id="@+id/sj_dl"
-                        android:text="@string/dl"
-                        android:onClick="dl"
-                        android:maxLines="1"
-                        style="@style/AppTheme"
-                        android:textSize="12sp"
-                        android:layout_marginStart="8dp"/>
-
-            </LinearLayout>
-
-            <!-- 日志内容区域：使用 match_parent 填充父容器 -->
-            <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:id="@+id/logs_linear_layout"
-                    android:layout_marginTop="1dp"
-                    android:minHeight="200dp">
-
-                <TextView
-                        android:id="@+id/state_logs"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:textIsSelectable="true"
-                        android:background="#000000"
-                        android:textColor="#07DD0C"
-                        android:padding="5dp"
-                        android:scrollbars="vertical"
-                        android:fontFamily="monospace"
-                        android:textSize="10sp"
-                        android:lineSpacingExtra="2dp"
-                        android:gravity="top"/>
-            </LinearLayout>
-
-            <!-- 底部版权信息：可点击链接 -->
-            <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="0dp">
-
-                <TextView
-                        android:id="@+id/bq"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/bq"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:gravity="center"
-                        android:textColor="#607D8B"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:onClick="openAuthorWebsite"
-                        android:clickable="true"/>
-
-            </LinearLayout>
-
+            <!-- 底部版权信息（始终可见） -->
+            <TextView
+                android:id="@+id/bq"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/bq"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:gravity="center"
+                android:textColor="#607D8B"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:onClick="openAuthorWebsite"
+                android:clickable="true"
+                android:layout_marginTop="8dp"/>
         </LinearLayout>
 
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>

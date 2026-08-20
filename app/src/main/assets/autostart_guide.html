@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>自启动权限设置教程</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            padding: 16px;
+            padding-bottom: 40px;
+        }
+        h1 {
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+        .brand-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+        }
+        .brand-card h2 {
+            font-size: 17px;
+            color: #1976d2;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .brand-card h2::before {
+            content: "";
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background: #1976d2;
+            border-radius: 2px;
+        }
+        .step-list {
+            list-style: none;
+            counter-reset: step;
+        }
+        .step-list li {
+            position: relative;
+            padding-left: 32px;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .step-list li::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 1px;
+            width: 22px;
+            height: 22px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 22px;
+        }
+        .warn {
+            margin-top: 10px;
+            padding: 10px 12px;
+            background: #fff8e1;
+            border-left: 3px solid #ffa000;
+            border-radius: 0 6px 6px 0;
+            font-size: 13px;
+            color: #e65100;
+        }
+        .screenshot-placeholder {
+            margin-top: 12px;
+            width: 100%;
+            aspect-ratio: 9 / 16;
+            max-height: 320px;
+            background: #fafafa;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 13px;
+            text-align: center;
+            padding: 16px;
+        }
+        /* 有真实截图时替换占位符 */
+        .screenshot-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+        .tip-banner {
+            background: #e8f5e9;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #2e7d32;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<h1>📱 自启动权限设置教程</h1>
+
+<div class="tip-banner">
+    💡 开启自启动后，「V免签监控端_Pro」才能在后台稳定接收消息。<br>
+    请根据您的手机品牌查看对应教程。
+</div>
+
+<!-- ========== 华为 / 荣耀 ========== -->
+<div class="brand-card">
+    <h2>华为 / 荣耀</h2>
+    <ol class="step-list">
+        <li>打开「手机管家」App</li>
+        <li>点击「应用启动管理」</li>
+        <li>找到「V免签监控端_Pro」，关闭右侧「自动管理」开关</li>
+        <li>在弹出窗口中勾选以下三项，然后点击「确定」：
+            <br>☑ 允许自启动
+            <br>☑ 允许关联启动
+            <br>☑ 允许后台活动
+        </li>
+    </ol>
+    <div class="warn">⚠️ 三个选项必须全部勾选，缺少任一项后台仍可能被系统杀死。</div>
+    <div class="screenshot-placeholder"><img src="huawei.png" alt="华为自启动设置截图"></div>
+<!--    <div class="screenshot-placeholder">📷 此处放置华为/荣耀自启动设置页截图<br>(建议尺寸 540×960)</div>-->
+</div>
+
+<!-- ========== 小米 / 红米 ========== -->
+<div class="brand-card">
+    <h2>小米 / 红米</h2>
+    <ol class="step-list">
+        <li>打开「手机管家」App</li>
+        <li>点击「应用管理」→「权限」</li>
+        <li>点击「自启动管理」</li>
+        <li>找到「V免签监控端_Pro」，开启开关</li>
+    </ol>
+    <div class="warn">⚠️ 建议同时开启「后台自启动」和「锁屏自启动」，防止锁屏后断连。</div>
+    <div class="screenshot-placeholder">...</div>
+</div>
+
+<!-- ========== OPPO / 一加 / realme ========== -->
+<div class="brand-card">
+    <h2>OPPO / 一加 / realme</h2>
+    <ol class="step-list">
+        <li>打开「手机管家」App</li>
+        <li>点击「权限隐私」→「自启动管理」</li>
+        <li>找到「V免签监控端_Pro」，开启开关</li>
+    </ol>
+    <div class="warn">⚠️ 如未找到自启动管理入口，也可尝试：<br>设置 → 电池 → 更多电池设置 → 优化电池使用 → 选择本应用 → 不限制</div>
+    <div class="screenshot-placeholder">...</div>
+</div>
+
+<!-- ========== vivo / iQOO ========== -->
+<div class="brand-card">
+    <h2>vivo / iQOO</h2>
+    <ol class="step-list">
+        <li>打开「i管家」App</li>
+        <li>点击「应用管理」→「权限管理」</li>
+        <li>点击「自启动管理」</li>
+        <li>找到「V免签监控端_Pro」，开启开关</li>
+    </ol>
+    <div class="warn">⚠️ 建议同时在「电池」→「后台耗电管理」中将本应用设为「允许后台运行」。</div>
+    <div class="screenshot-placeholder">...</div>
+</div>
+
+<!-- ========== 三星 ========== -->
+<div class="brand-card">
+    <h2>三星</h2>
+    <ol class="step-list">
+        <li>打开「设置」</li>
+        <li>点击「电池和设备维护」→「电池」</li>
+        <li>点击「后台用量」</li>
+        <li>找到「V免签监控端_Pro」，选择「从不休眠」</li>
+    </ol>
+    <div class="warn">⚠️ 如未找到，也可尝试：设置 → 应用程序 → V免签监控端_Pro → 电池 → 不限制</div>
+    <div class="screenshot-placeholder">...</div>
+</div>
+
+<!-- ========== 魅族 ========== -->
+<div class="brand-card">
+    <h2>魅族</h2>
+    <ol class="step-list">
+        <li>打开「手机管家」App</li>
+        <li>点击「权限管理」→「后台管理」</li>
+        <li>找到「V免签监控端_Pro」，选择「允许后台运行」</li>
+    </ol>
+    <div class="warn">⚠️ 建议同时在「安全中心」→「自启动管理」中也开启本应用。</div>
+    <div class="screenshot-placeholder">...</div>
+</div>
+
+<!-- ========== 联想 / 摩托罗拉 ========== -->
+<div class="brand-card">
+    <h2>联想 / 摩托罗拉</h2>
+    <ol class="step-list">
+        <li>打开「手机管家」App</li>
+        <li>点击「应用管理」→「自启动管理」</li>
+        <li>找到「V免签监控端_Pro」，开启开关</li>
+    </ol>
+    <div class="screenshot-placeholder">...</div>
+</div>
+
+<!-- ========== 中兴 / nubia ========== -->
+<div class="brand-card">
+    <h2>中兴 / nubia</h2>
+    <ol class="step-list">
+        <li>打开「手机管家」App</li>
+        <li>点击「权限管理」→「自启动管理」</li>
+        <li>找到「V免签监控端_Pro」，开启开关</li>
+    </ol>
+    <div class="screenshot-placeholder">...</div>
+</div>
+
+</body>
+</html>

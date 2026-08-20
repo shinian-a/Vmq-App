@@ -151,7 +151,7 @@ fi
 set -- \
         "-Dorg.gradle.appname=$APP_BASE_NAME" \
         -classpath "$CLASSPATH" \
-        org.gradle.launcher.GradleMain \
+        org.gradle.wrapper.GradleWrapperMain \
         "$@"
 
 # Stop when "xargs" is not available.

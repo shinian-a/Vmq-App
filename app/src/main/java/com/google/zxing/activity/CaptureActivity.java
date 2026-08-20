@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.widget.Toast;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.SurfaceHolder;
@@ -56,7 +58,6 @@ import java.util.Vector;
  */
 public class CaptureActivity extends AppCompatActivity implements Callback {
 
-    private static final int REQUEST_CODE_SCAN_GALLERY = 100;
 
     private CaptureActivityHandler handler;
     private ViewfinderView viewfinderView;
@@ -75,6 +76,15 @@ public class CaptureActivity extends AppCompatActivity implements Callback {
     private ProgressDialog mProgress;
     private Bitmap scanBitmap;
 
+    // 注册 Launcher
+    private final ActivityResultLauncher<Intent> galleryLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                            handleAlbumPic(result.getData());
+                        }
+                    });
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,24 +121,15 @@ public class CaptureActivity extends AppCompatActivity implements Callback {
     private View.OnClickListener albumOnClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            //打开手机中的相册
-            Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); //"android.intent.action.GET_CONTENT"
+            Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT);
             innerIntent.setType("image/*");
-            startActivityForResult(innerIntent, REQUEST_CODE_SCAN_GALLERY);
+            // ✅ 替换 startActivityForResult
+            galleryLauncher.launch(innerIntent);
         }
     };
 
-    @Override
-    protected void onActivityResult(final int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case REQUEST_CODE_SCAN_GALLERY:
-                    handleAlbumPic(data);
-                    break;
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+
+
 
     /**
      * 处理选择的图片
@@ -251,7 +252,8 @@ public class CaptureActivity extends AppCompatActivity implements Callback {
             if (bundle == null) {
                 bundle = new Bundle();
             }
-            bundle.putString(Constant.INTENT_EXTRA_KEY_QR_SCAN, resultString);
+            // 统一使用 AppConstants key
+            bundle.putString(AppConstants.INTENT_EXTRA_KEY_QR_SCAN, resultString);
             resultIntent.putExtras(bundle);
             this.setResult(RESULT_OK, resultIntent);
         }
