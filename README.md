@@ -6,6 +6,10 @@
 
 ## PC监控端下载：[PC_Pro_Server](https://shinian-a.github.io/) PC端新增自定义监听回调数据，支持任意编程语言接入收款
 
+## 推荐项目EgoPay：https://shinian-a.github.io/post/EgoPay-yi-zhi-fu-wang-zhan.html
+
+APP已更新完整分支
+
 ### ✨ 核心功能
 
 - 🎯 **双平台监听**：支持支付宝和微信收款通知监听
@@ -20,27 +24,27 @@
 相比原版的主要改进：
 - ✅ 修复支付宝和微信不回调的 BUG
 - ✅ 优化代码结构，提升执行效率
-- ✅ 删除冗余代码，加快启动速度
 - ✅ 增加电池白名单权限，防止被系统杀掉进程
+- ✅ 增加日志监听
 
 #### 有任何建议欢迎致信我，如果可能的话可增加功能，如果本项目对您有帮助请给我一个免费的Star⭐
 
 ## 🏗️ 技术架构
 
-- **开发语言**：Java + XML
-- **目标平台**：Android 5.0+ (API 21)
-- **编译 SDK**：Android 34（已优化兼容性）
-- **构建工具**：Gradle 8.12.0
+- **开发语言**：Java + XML + Gradle
+- **目标平台**：Android 7.0+ (API 21)
+- **编译 SDK**：Android 36（已优化兼容性）
+- **构建工具**：Gradle 9.1.0
 - **开发环境**：Android Studio / AIDE
 
 ### 📱 设备兼容性说明
 
 #### ✅ 已测试支持的设备
 
-- 小米/Redmi 系列（MIUI 12-14）
-- 华为/荣耀系列
-- OPPO/Vivo 系列
-- 三星系列
+- 小米/Redmi 系列（MIUI 12-14）（实现
+- 华为/荣耀系列（实现
+- OPPO/Vivo 系列（未实现
+- 三星系列（未实现
 - Google Pixel 系列
 
 ## 📥 安装使用
@@ -66,12 +70,9 @@ git clone https://github.com/shinian-a/Vmq-App.git
 # 点击 Build → Build Bundle(s) / APK(s) → Build APK(s)
 ```
 
-#### AIDE构建（可能无效）
-将项目源码导入 `/sdcard/AppProjects` 目录，使用AIDE 进行构建编译。
-
 #### Activity(历史)
 
-你可以使用Activity查阅所有时间段源码构建详细过程并下载调试发布版本，默认情况下每次build都是已签名Apk
+你可以使用Activity查阅所有时间段源码构建详细过程
 
 ## 💾 下载镜像
 
@@ -105,11 +106,6 @@ git clone https://github.com/shinian-a/Vmq-App.git
 - 🔄 后台运行
 - 🌙 息屏后台运行
 
-### 注意事项
-
-- **分辨率适配**
-- **云手机兼容性**：如遇到监听权限异常，请及时反馈
-- **更新建议**：Android 生态更新频繁，请保持使用最新版本以确保业务稳定
 
 ### 故障排查
 
@@ -119,6 +115,7 @@ git clone https://github.com/shinian-a/Vmq-App.git
 3. 确认应用处于运行状态（前台/后台）
 4. 查看日志面板确认回调状态
 5. 升级到最新版本
+6. 开启软件自启动
 
 ## 📬 联系与支持
 
@@ -131,8 +128,6 @@ git clone https://github.com/shinian-a/Vmq-App.git
 本项目基于 [V免签](https://github.com/szvone/Vmq) 开发，感谢原作者的贡献。
 
 ---
-
-<div align="center">
 
 **如果这个项目对您有帮助，请给一个免费的 Star⭐！**
 
