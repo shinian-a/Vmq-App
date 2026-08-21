@@ -4,9 +4,9 @@
 
 这是一款基于V 免签开发的 Android 收款监听应用，**无需 Root 权限和框架**即可实现支付宝和微信收款消息的自动监听与回调。
 
-## PC监控端下载：[PC_Pro_Server](https://shinian-a.github.io/) PC端新增自定义监听回调数据，支持任意编程语言接入收款
+## PC监控端下载：[PC_Vmq_Pro_Server](https://shinian-a.github.io/) PC端新增自定义监听回调数据，支持任意编程语言接入收款
 
-## 推荐项目EgoPay：https://shinian-a.github.io/post/EgoPay-yi-zhi-fu-wang-zhan.html
+## [推荐项目EgoPay](https://shinian-a.github.io/post/EgoPay-yi-zhi-fu-wang-zhan.html)
 
 APP已更新完整分支
 
