@@ -21,11 +21,10 @@
     <!-- 防止手机休眠 -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
-    <!-- 修改或删除 SD 卡中的内容 -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
-    <!-- 读取存储卡中的内容 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!-- Android 9 及以下保存图片到公共目录所需；Android 10+ 使用 MediaStore -->
+    <uses-permission
+            android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+            android:maxSdkVersion="28"/>
 
     <!-- 拍摄照片和录制视频 -->
     <uses-permission android:name="android.permission.CAMERA"/>
