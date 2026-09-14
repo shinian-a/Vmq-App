@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import java.io.File;
 import android.os.Environment;
 import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import android.provider.MediaStore;
 import android.content.Intent;
@@ -21,77 +20,19 @@ import java.io.OutputStream;
 
 
 public class SaveImageUtils {
-    //仅适用于10.0以下
+    /** 保存图片到系统相册。 */
     public static void saveImageToGallery(Context context, Bitmap bmp) {
-        // 首先保存图片
-        File appDir = new File(Environment.getExternalStorageDirectory(), "Pictures");
-        if (!appDir.exists()) {
-            appDir.mkdir();
-        }
-        String fileName = System.currentTimeMillis() + ".jpg";
-        File file = new File(appDir, fileName);
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
-            fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // 其次把文件插入到系统图库
-        try {
-            MediaStore.Images.Media.insertImage(context.getContentResolver(),
-                                                file.getAbsolutePath(), fileName, null);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        // 最后通知图库更新
-        context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + file.getPath())));
-
+        fileSaveToPublic(context, System.currentTimeMillis() + ".png", bmp);
     }
+
     public static void saveImageToGallerys(Context context, Bitmap bmp) {
-        if (bmp == null){
+        if (bmp == null) {
             Toast.makeText(context, "保存出错了...", Toast.LENGTH_SHORT).show();
             return;
         }
-        // 首先保存图片
-        //File appDir = new File(BaseApplication.app.getTmpDir(), "ywq");
-        File appDir = new File(Environment.getExternalStorageDirectory(), "Boohee");
-        if (!appDir.exists()) {
-            appDir.mkdir();
-        }
-        String fileName = System.currentTimeMillis() + ".jpg";
-        File file = new File(appDir, fileName);
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
-            fos.close();
-        } catch (FileNotFoundException e) {
-            Toast.makeText(context, "文件未发现...", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        } catch (IOException e) {
+        if (fileSaveToPublic(context, System.currentTimeMillis() + ".png", bmp) == null) {
             Toast.makeText(context, "保存出错了...", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }catch (Exception e){
-            Toast.makeText(context, "保存出错了...", Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
         }
-
-        // 最后通知图库更新
-        try {
-            MediaStore.Images.Media.insertImage(context.getContentResolver(), file.getAbsolutePath(), fileName, null);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        Uri uri = Uri.fromFile(file);
-        intent.setData(uri);
-        context.sendBroadcast(intent);
-        Toast.makeText(context, "保存出错了...", Toast.LENGTH_SHORT).show();
     }
     
     
@@ -117,7 +58,7 @@ public class SaveImageUtils {
                 //File folder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
                 //判断目录是否存在
                 //目录不存在时自动创建
-                if (folder.exists() || folder.mkdir()) {
+                if (folder.exists() || folder.mkdirs()) {
                     File file = new File(folder, fileName);
                     fos = new FileOutputStream(file);
                     //写入文件
@@ -162,27 +103,46 @@ public class SaveImageUtils {
             values.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
             //设置图片路径
             values.put(MediaStore.Images.Media.RELATIVE_PATH, folder);
+            values.put(MediaStore.Images.Media.IS_PENDING, 1);
             //执行insert操作，向系统文件夹中添加文件
             //EXTERNAL_CONTENT_URI代表外部存储器，该值不变
             Uri uri = context.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
             OutputStream os = null;
+            boolean success = false;
             try {
                 if (uri != null) {
                     //若生成了uri，则表示该文件添加成功
                     //使用流将内容写入该uri中即可
                     os = context.getContentResolver().openOutputStream(uri);
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+                    if (os == null) {
+                        throw new IOException("Failed to open output stream");
+                    }
+                    if (!bitmap.compress(Bitmap.CompressFormat.PNG, 100, os)) {
+                        throw new IOException("Failed to compress bitmap");
+                    }
                     os.flush();
-                    path = uri.getPath();
+                    os.close();
+                    os = null;
+                    ContentValues completed = new ContentValues();
+                    completed.put(MediaStore.Images.Media.IS_PENDING, 0);
+                    context.getContentResolver().update(uri, completed, null, null);
+                    path = uri.toString();
+                    success = true;
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                if (uri != null) {
+                    context.getContentResolver().delete(uri, null, null);
+                }
             } finally {
                 if (os != null) {
                     try {
                         os.close();
                     } catch (IOException e) {
                         e.printStackTrace();
+                        if (uri != null && !success) {
+                            context.getContentResolver().delete(uri, null, null);
+                        }
                     }
                 }
             }
